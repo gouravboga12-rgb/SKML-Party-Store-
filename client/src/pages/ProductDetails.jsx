@@ -78,9 +78,23 @@ const ProductDetails = () => {
     }
   }, [activeImage, product, selectedColor]);
 
+  const getCurrentPrice = () => {
+    if (!product) return 0;
+    let basePrice = product.price;
+    
+    // Check if the product is sold by meters (Home Decor category or size contains "Meter")
+    if (product.category === 'home-decor' || selectedSize?.toLowerCase().includes('meter')) {
+      const meters = parseInt(selectedSize) || 1;
+      return basePrice * meters;
+    }
+    
+    return basePrice;
+  };
+
   const handleAddToCart = () => {
     const productToCart = {
       ...product,
+      price: getCurrentPrice(),
       selectedColor: selectedColor?.name,
       selectedSize: selectedSize === 'Custom' ? `Custom: ${customSize}` : selectedSize
     };
@@ -172,8 +186,8 @@ const ProductDetails = () => {
               </h1>
               
               <div className="flex items-baseline gap-4">
-                <p className="text-3xl font-bold text-zinc-900 tracking-tight">₹{product.price.toLocaleString()}</p>
-                <span className="text-zinc-400 line-through text-sm">₹{(product.price * 1.5).toFixed(0)}</span>
+                <p className="text-3xl font-bold text-zinc-900 tracking-tight">₹{getCurrentPrice().toLocaleString()}</p>
+                <span className="text-zinc-400 line-through text-sm">₹{(getCurrentPrice() * 1.5).toFixed(0)}</span>
                 <span className="text-green-600 text-xs font-bold uppercase tracking-widest">33% OFF</span>
               </div>
             </div>
@@ -284,7 +298,7 @@ const ProductDetails = () => {
               
               <button 
                 className="w-full py-4 bg-zinc-100 text-zinc-900 font-bold uppercase tracking-widest text-xs hover:bg-zinc-900 hover:text-white transition-all flex items-center justify-center gap-2"
-                onClick={() => navigate('/checkout', { state: { directPurchase: product, quantity }})}
+                onClick={() => navigate('/checkout', { state: { directPurchase: { ...product, price: getCurrentPrice() }, quantity }})}
               >
                 Buy Now
               </button>
