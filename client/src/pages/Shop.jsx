@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { products, categories } from '../data/products';
 import ProductCard from '../components/UI/ProductCard';
-import { SlidersHorizontal, Search } from 'lucide-react';
+import { SlidersHorizontal, Search, X } from 'lucide-react';
 
 const Shop = () => {
   const [searchParams] = useSearchParams();
@@ -48,12 +48,12 @@ const Shop = () => {
         {/* Filters & Search */}
         <div className="flex flex-col lg:flex-row gap-8 mb-12" data-aos="fade-up">
           {/* Categories */}
-          <div className="flex flex-wrap gap-4 flex-grow">
+          <div className="flex flex-wrap gap-3 flex-grow">
             <button
               onClick={() => setActiveCategory('all')}
-              className={`px-6 py-2 text-[10px] uppercase tracking-widest font-bold border transition-all ${
+              className={`px-6 py-2 text-[10px] uppercase tracking-widest font-bold border rounded-full transition-all ${
                 activeCategory === 'all' 
-                ? 'bg-zinc-900 text-white border-zinc-900' 
+                ? 'bg-zinc-900 text-white border-zinc-900 shadow-lg' 
                 : 'text-zinc-400 border-zinc-200 hover:border-zinc-900 hover:text-zinc-900'
               }`}
             >
@@ -63,9 +63,9 @@ const Shop = () => {
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-6 py-2 text-[10px] uppercase tracking-widest font-bold border transition-all ${
+                className={`px-6 py-2 text-[10px] uppercase tracking-widest font-bold border rounded-full transition-all ${
                   activeCategory === cat.id 
-                  ? 'bg-zinc-900 text-white border-zinc-900' 
+                  ? 'bg-zinc-900 text-white border-zinc-900 shadow-lg' 
                   : 'text-zinc-400 border-zinc-200 hover:border-zinc-900 hover:text-zinc-900'
                 }`}
               >
@@ -75,15 +75,25 @@ const Shop = () => {
           </div>
 
           {/* Search */}
-          <div className="relative lg:w-80">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
-            <input
-              type="text"
-              placeholder="SEARCH PRODUCTS..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-xs tracking-widest px-12 py-3 focus:outline-none focus:border-zinc-900 transition-all uppercase"
-            />
+          <div className="lg:w-96">
+            <div className="flex items-center bg-zinc-50 border border-zinc-200 px-6 rounded-full focus-within:border-zinc-900 focus-within:bg-white focus-within:shadow-2xl focus-within:shadow-zinc-200/50 transition-all group">
+              <Search className="text-zinc-400 group-focus-within:text-zinc-900 transition-colors" size={18} />
+              <input
+                type="text"
+                placeholder="SEARCH PRODUCTS..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-transparent border-none text-zinc-900 text-[10px] font-bold tracking-[0.2em] px-4 py-4 focus:outline-none uppercase"
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="text-zinc-400 hover:text-zinc-900 transition-colors p-1"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
