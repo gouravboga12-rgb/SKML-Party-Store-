@@ -1,0 +1,15 @@
+{
+  "name": "skml-indana-party-store-root",
+  "version": "1.0.0",
+  "description": "Root management for SKML Indana Party Store project",
+  "main": "index.js",
+  "scripts": {
+    "client": "npm run dev --prefix client",
+    "server": "npm run dev --prefix server",
+    "dev": "concurrently \"npm run client\" \"npm run server\"",
+    "install:all": "npm install && npm install --prefix client && npm install --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

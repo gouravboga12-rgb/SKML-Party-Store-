@@ -1,0 +1,66 @@
+# Walkthrough - SKML Indana Party Store
+
+I have successfully built the **SKML Indana Party Store** e-commerce platform. The project is a modern, responsive, and premium web application designed for a seamless shopping experience with online payments and local delivery integration.
+
+## Key Features Implemented
+
+### 1. Premium Aesthetic & UI
+- **Dark Theme**: A high-end black and light grey aesthetic with white accents.
+- **Micro-Animations**: Subtle entrance effects using **AOS** (Animate On Scroll) and smooth hover states.
+- **Mobile-First**: Fully responsive design that looks stunning on phones, tablets, and desktops.
+- **Branding**: Integrated your custom logo across the header, footer, and checkout pages.
+
+### 2. Full E-Commerce Flow
+- **Product Discovery**: High-impact Home page with category-based browsing and featured collections.
+- **Shopping Experience**: 
+  - Dynamic **Shop page** with instant search and category filtering.
+  - Detailed **Product pages** with variant selection and quantity controls.
+- **State Management**: Persistent shopping cart using React Context and LocalStorage.
+
+### 3. Integrated Checkout & Payments
+- **Razorpay Integration**: A secure, dual-layer payment flow.
+  - **Frontend**: Razorpay Web SDK integration in the Checkout page.
+  - **Backend**: Express server to securely generate Order IDs and verify payment signatures.
+- **Delivery Focus**: Clear messaging regarding **DCDT Courier Services** as the primary delivery partner.
+
+### 4. Direct Communication
+- **Floating WhatsApp**: A consistent floating action button for instant customer support.
+- **Order Fallback**: WhatsApp inquiry buttons on every product for wholesale or direct queries.
+
+## Project Structure
+
+```mermaid
+graph TD
+    Root[SKML INDANA] --> Client[client/ - React Frontend]
+    Root --> Server[server/ - Node.js Backend]
+    
+    Client --> Pages[Home, Shop, ProductDetails, Cart, Checkout]
+    Client --> Components[Header, Footer, ProductCard, UI Elements]
+    Client --> Context[CartState Management]
+    
+    Server --> Endpoints[POST /api/order/create, POST /api/order/verify]
+```
+
+## How to Run the Project
+
+### 1. Start the Backend
+```bash
+cd server
+# Add your Razorpay keys to the .env file
+npm run dev
+```
+
+### 2. Start the Frontend
+```bash
+cd client
+npm run dev
+```
+
+## Verification Results
+- [x] Responsive layout tested on simulated mobile and desktop.
+- [x] Cart logic verified (Add, Remove, Total Calculation).
+- [x] Razorpay script loading and initialization verified.
+- [x] AOS animations confirmed triggering on scroll.
+
+> [!IMPORTANT]
+> **Action Required**: Please update the `server/.env` file with your actual **Razorpay Key ID** and **Key Secret** to enable real transactions. I have provided a template for you.
