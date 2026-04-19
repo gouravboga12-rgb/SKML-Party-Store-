@@ -137,7 +137,7 @@ const Home = () => {
             <div className="relative" data-aos="fade-right">
               <div className="aspect-square bg-zinc-200 rounded-sm overflow-hidden p-2">
                 <img 
-                  src="https://images.unsplash.com/photo-1541746972996-4e0b0f43e01a?q=80&w=1000&auto=format&fit=crop" 
+                  src="/images/story_fabrics.png" 
                   alt="Quality Fabrics" 
                   className="w-full h-full object-cover"
                 />
