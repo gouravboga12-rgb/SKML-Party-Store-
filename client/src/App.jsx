@@ -9,9 +9,11 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 
-// Components
+// Components (kept as regular imports for stability)
 import Layout from './components/Layout/Layout';
 import ScrollToHash from './components/Layout/ScrollToHash';
+import AdminLayout from './components/Admin/AdminLayout';
+import ProtectedRoute from './components/Admin/ProtectedRoute';
 
 // Lazy Pages
 const Home = lazy(() => import('./pages/Home'));
@@ -26,8 +28,7 @@ const Profile = lazy(() => import('./pages/Auth/Profile'));
 const MyOrders = lazy(() => import('./pages/Auth/MyOrders'));
 const MyReviews = lazy(() => import('./pages/Auth/MyReviews'));
 
-// Admin Components (Lazy)
-const AdminLayout = lazy(() => import('./components/Admin/AdminLayout'));
+// Admin Pages (Lazy)
 const AdminDashboard = lazy(() => import('./pages/Admin/Dashboard'));
 const AdminProducts = lazy(() => import('./pages/Admin/Products'));
 const AdminCategories = lazy(() => import('./pages/Admin/Categories'));
@@ -36,7 +37,6 @@ const AdminOrders = lazy(() => import('./pages/Admin/Orders'));
 const AdminReviews = lazy(() => import('./pages/Admin/Reviews'));
 const AdminUsers = lazy(() => import('./pages/Admin/Users'));
 const AdminLogin = lazy(() => import('./pages/Admin/Login'));
-const ProtectedRoute = lazy(() => import('./components/Admin/ProtectedRoute'));
 
 // Loading Fallback
 const PageLoader = () => (
