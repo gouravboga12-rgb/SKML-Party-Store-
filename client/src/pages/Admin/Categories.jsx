@@ -157,7 +157,7 @@ const Categories = () => {
                   alt={cat.name} 
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
-                <div className="absolute top-4 right-4 flex gap-2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
+                <div className="absolute top-4 right-4 flex gap-2 lg:translate-y-4 opacity-100 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 transition-all">
                   <button 
                     onClick={() => {
                       setEditingCategory(cat);
