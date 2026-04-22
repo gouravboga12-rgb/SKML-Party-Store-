@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ShoppingCart, Search, X, User, LogOut, Package, ShoppingBag, MessageSquare } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
@@ -9,6 +9,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { cartCount, clearCart } = useCart();
   const { user, signOut } = useAuth();
@@ -26,6 +27,23 @@ const Header = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close user menu when clicking/touching outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setShowUserMenu(false);
+      }
+    };
+    if (showUserMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [showUserMenu]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -109,7 +127,7 @@ const Header = () => {
             </button>
 
             {/* User Profile Dropdown */}
-            <div className="relative">
+            <div className="relative" ref={userMenuRef}>
               <button 
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 className={`p-2.5 rounded-full transition-all hover:scale-105 ${shouldBeSolid ? 'text-zinc-900 bg-zinc-100 hover:bg-zinc-200' : 'text-white bg-white/10 hover:bg-white/20 border border-white/20'}`}
