@@ -3,7 +3,6 @@ const Razorpay = require('razorpay');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const crypto = require('crypto');
-const axios = require('axios');
 
 dotenv.config();
 
@@ -52,33 +51,11 @@ app.post('/api/order/verify', (req, res) => {
     .digest('hex');
 
   if (expectedSignature === razorpay_signature) {
-    // Send WhatsApp Notification to Admin
-    sendAdminNotification(razorpay_order_id);
     res.status(200).json({ status: 'success', message: 'Payment verified successfully' });
   } else {
     res.status(400).json({ status: 'failure', message: 'Payment verification failed' });
   }
 });
-
-async function sendAdminNotification(orderId) {
-  const adminPhone = process.env.ADMIN_WHATSAPP_NUMBER || '919398324095';
-  const apiKey = process.env.CALLMEBOT_API_KEY;
-
-  if (!apiKey) {
-    console.log('WhatsApp notification skipped: CALLMEBOT_API_KEY not set in .env');
-    return;
-  }
-
-  try {
-    const message = encodeURIComponent(`🚀 *New Order Received!*%0A%0AOrder ID: ${orderId}%0A%0ACheck the Admin Panel for details:%0Ahttps://skml-party-store.vercel.app/admin/orders`);
-    const url = `https://api.callmebot.com/whatsapp.php?phone=${adminPhone}&text=${message}&apikey=${apiKey}`;
-    
-    await axios.get(url);
-    console.log('WhatsApp notification sent to admin.');
-  } catch (error) {
-    console.error('Error sending WhatsApp notification:', error.message);
-  }
-}
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
