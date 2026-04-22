@@ -243,8 +243,64 @@ const Products = () => {
         </div>
       </div>
 
-      {/* Product Table */}
-      <div className="bg-white border border-zinc-200 rounded-sm overflow-x-auto shadow-sm scrollbar-hide">
+      {/* Mobile Card View (Visible only on small screens) */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {loading && products.length === 0 ? (
+          <div className="bg-white p-10 text-center opacity-20">
+            <Loader2 size={32} className="animate-spin mx-auto" />
+          </div>
+        ) : filteredProducts.length > 0 ? (
+          filteredProducts.map((p) => (
+            <div key={p.id} className="bg-white border border-zinc-200 p-4 rounded-sm space-y-4 shadow-sm">
+              <div className="flex gap-4">
+                <div className="w-20 h-20 bg-zinc-100 rounded-sm overflow-hidden flex-shrink-0">
+                  <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded-sm uppercase font-black tracking-widest w-fit mb-1 block">
+                    {p.category}
+                  </span>
+                  <h3 className="text-sm font-black text-zinc-900 uppercase tracking-tighter truncate">{p.name}</h3>
+                  <p className="text-sm font-black text-zinc-900 mt-1">₹{p.price}</p>
+                </div>
+              </div>
+              
+              <div className="pt-4 border-t border-zinc-100 flex items-center justify-between">
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => {
+                      setEditingProduct(p);
+                      setFormData(p);
+                      setIsModalOpen(true);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-zinc-900 text-white text-[10px] font-black uppercase tracking-widest rounded-sm"
+                  >
+                    <Edit2 size={12} /> Edit
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(p.id)}
+                    className="flex items-center gap-2 px-4 py-2 bg-white border border-red-200 text-red-600 text-[10px] font-black uppercase tracking-widest rounded-sm"
+                  >
+                    <Trash2 size={12} /> Delete
+                  </button>
+                </div>
+                <span className={`text-[8px] px-2 py-0.5 rounded-full uppercase font-black tracking-tighter ${
+                  p.price_type === 'meter' ? 'bg-secondary text-white' : 'bg-zinc-100 text-zinc-500'
+                }`}>
+                  {p.price_type === 'meter' ? 'Per Meter' : 'Fixed'}
+                </span>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="bg-white p-10 text-center opacity-20 italic text-xs">
+            No products found matching your search.
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Product Table (Hidden on small screens) */}
+      <div className="hidden md:block bg-white border border-zinc-200 rounded-sm overflow-x-auto shadow-sm scrollbar-hide">
         <table className="w-full text-left min-w-[1000px]">
           <thead className="bg-zinc-50 border-b border-zinc-200">
             <tr>

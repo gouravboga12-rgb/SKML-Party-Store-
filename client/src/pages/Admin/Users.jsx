@@ -95,8 +95,48 @@ const AdminUsers = () => {
         />
       </div>
 
-      {/* Users Table */}
-      <div className="bg-white border border-zinc-100 rounded-sm overflow-x-auto shadow-sm scrollbar-hide">
+      {/* Mobile Card View (Visible only on small screens) */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {filteredUsers.length > 0 ? (
+          filteredUsers.map((user) => (
+            <div key={user.id} className="bg-white border border-zinc-100 p-4 rounded-sm shadow-sm space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 bg-zinc-100 rounded-full flex items-center justify-center text-zinc-400">
+                   <UserIcon size={20} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-zinc-900 uppercase tracking-wide truncate">{user.full_name || 'Incognito Member'}</p>
+                  <p className="text-[10px] text-zinc-500 flex items-center gap-1 mt-0.5 truncate">
+                    <Mail size={10} /> {user.email}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-3 border-t border-zinc-50">
+                <span className={`px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest flex items-center gap-1 ${
+                  user.email === 'trendingfabricstore@gmail.com' ? 'bg-zinc-900 text-white' : 
+                  user.source === 'profile' ? 'bg-blue-50 text-blue-600' : 'bg-zinc-100 text-zinc-500'
+                }`}>
+                  <Shield size={10} />
+                  {user.email === 'trendingfabricstore@gmail.com' ? 'Admin' : 
+                   user.source === 'profile' ? 'Member' : 'Guest'}
+                </span>
+                <div className="flex items-center gap-1 text-zinc-400 text-[9px] font-bold uppercase">
+                  <Calendar size={10} />
+                  {new Date(user.created_at).toLocaleDateString()}
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="p-10 text-center bg-white border border-zinc-100 rounded-sm opacity-20">
+            <Users size={32} className="mx-auto mb-2" />
+            <p className="text-[10px] uppercase font-black">No members found</p>
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Table View (Hidden on small screens) */}
+      <div className="hidden md:block bg-white border border-zinc-100 rounded-sm overflow-x-auto shadow-sm scrollbar-hide">
         <table className="w-full min-w-[700px]">
           <thead>
             <tr className="bg-zinc-50 border-b border-zinc-100">

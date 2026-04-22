@@ -121,7 +121,37 @@ const Dashboard = () => {
               View All
             </Link>
           </div>
-          <div className="bg-white border border-zinc-200 overflow-x-auto rounded-sm scrollbar-hide">
+          {/* Mobile Card View (Visible only on small screens) */}
+          <div className="grid grid-cols-1 gap-4 md:hidden">
+            {recentProducts.length > 0 ? (
+              recentProducts.map((product) => (
+                <div key={product.id} className="bg-white border border-zinc-200 p-4 rounded-sm shadow-sm space-y-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="text-sm font-black text-zinc-900 uppercase tracking-tighter truncate max-w-[200px]">{product.name}</h4>
+                      <p className="text-[10px] text-zinc-400 mt-1">ID: {product.id}</p>
+                    </div>
+                    <span className="text-sm font-black text-zinc-900">₹{product.price}</span>
+                  </div>
+                  <div className="flex items-center justify-between pt-4 border-t border-zinc-50">
+                    <span className="text-[10px] px-2 py-1 bg-zinc-100 text-zinc-600 rounded-sm uppercase font-bold">
+                      {product.category || 'N/A'}
+                    </span>
+                    <span className="text-[10px] text-zinc-400 font-medium italic">
+                      {new Date(product.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="bg-white p-10 text-center opacity-20 italic text-[10px] uppercase font-bold">
+                No products found yet
+              </div>
+            )}
+          </div>
+
+          {/* Desktop Table View (Hidden on small screens) */}
+          <div className="hidden md:block bg-white border border-zinc-200 overflow-x-auto rounded-sm scrollbar-hide">
             <table className="w-full text-left min-w-[600px]">
               <thead className="bg-zinc-50 border-b border-zinc-200">
                 <tr>
