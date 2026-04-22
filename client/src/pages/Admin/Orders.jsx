@@ -43,6 +43,7 @@ const AdminOrders = () => {
     address: '',
     pincode: '',
     tracking_id: '',
+    tracking_url: '',
     status: ''
   });
 
@@ -132,6 +133,7 @@ const AdminOrders = () => {
       address: order.address || '',
       pincode: order.pincode || '',
       tracking_id: order.tracking_id || '',
+      tracking_url: order.tracking_url || '',
       status: order.status || ''
     });
     setIsEditModalOpen(true);
@@ -150,6 +152,7 @@ const AdminOrders = () => {
           address: formData.address,
           pincode: formData.pincode,
           tracking_id: formData.tracking_id,
+          tracking_url: formData.tracking_url,
           status: formData.status
         })
         .eq('id', editingOrder.id);
@@ -340,8 +343,18 @@ const AdminOrders = () => {
                   <div className="flex items-center gap-8 mr-12">
                      {order.tracking_id && (
                        <div className="text-right hidden sm:block">
-                         <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1">Tracking ID</p>
+                         <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1">DCDT Tracking ID</p>
                          <p className="text-xs font-black text-secondary tracking-widest uppercase">{order.tracking_id}</p>
+                         {order.tracking_url && (
+                           <a
+                             href={order.tracking_url}
+                             target="_blank"
+                             rel="noopener noreferrer"
+                             className="inline-flex items-center gap-1 mt-1 text-[9px] font-black uppercase tracking-widest text-blue-600 hover:text-blue-800 underline"
+                           >
+                             <ExternalLink size={10} /> Track Package
+                           </a>
+                         )}
                        </div>
                      )}
                      <div className="text-right">
@@ -479,8 +492,18 @@ const AdminOrders = () => {
                      <input required value={formData.pincode} onChange={(e) => setFormData({...formData, pincode: e.target.value})} className="w-full p-3 bg-zinc-50 border border-zinc-100 text-xs font-bold uppercase tracking-widest focus:bg-white focus:border-zinc-900 outline-none" />
                   </div>
                   <div className="space-y-1">
-                     <label className="text-[10px] font-black uppercase text-secondary">Tracking ID</label>
+                     <label className="text-[10px] font-black uppercase text-secondary">DCDT Tracking ID</label>
                      <input placeholder="DCDT TRACKING #" value={formData.tracking_id} onChange={(e) => setFormData({...formData, tracking_id: e.target.value})} className="w-full p-3 bg-secondary/5 border border-secondary/20 text-xs font-black uppercase tracking-widest focus:bg-white focus:border-secondary outline-none text-secondary" />
+                  </div>
+                  <div className="md:col-span-2 space-y-1">
+                    <label className="text-[10px] font-black uppercase text-blue-600 flex items-center gap-1"><ExternalLink size={10} /> Track URL (Optional)</label>
+                    <input
+                      placeholder="https://dcdt.in/track/..."
+                      value={formData.tracking_url}
+                      onChange={(e) => setFormData({...formData, tracking_url: e.target.value})}
+                      className="w-full p-3 bg-blue-50 border border-blue-100 text-xs font-medium tracking-wide focus:bg-white focus:border-blue-500 outline-none text-blue-700"
+                    />
+                    <p className="text-[9px] text-zinc-400 uppercase tracking-widest">Customer will see a clickable "Track Your Order" link on their My Orders page.</p>
                   </div>
                   <div className="space-y-1">
                      <label className="text-[10px] font-black uppercase text-zinc-400">Status</label>

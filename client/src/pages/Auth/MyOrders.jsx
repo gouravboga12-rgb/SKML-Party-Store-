@@ -140,9 +140,26 @@ const MyOrders = () => {
                       <p className="text-zinc-500 text-[10px] uppercase font-light">PIN: {order.pincode}</p>
                       
                       {order.tracking_id && (
-                        <div className="mt-4 p-3 bg-secondary/5 border-l-2 border-secondary rounded-r-sm">
-                           <p className="text-[7px] font-black text-secondary/60 uppercase tracking-[0.2em] mb-1">DCDT Tracking ID</p>
+                        <div className="mt-4 p-3 bg-secondary/5 border-l-2 border-secondary rounded-r-sm space-y-2">
+                           <p className="text-[7px] font-black text-secondary/60 uppercase tracking-[0.2em]">DCDT Tracking ID</p>
                            <p className="text-sm font-black text-secondary tracking-widest uppercase italic">{order.tracking_id}</p>
+                           {order.tracking_url ? (
+                             <div className="pt-2 border-t border-secondary/10">
+                               <p className="text-[8px] text-zinc-500 uppercase tracking-widest mb-2">
+                                 Click the link below to track your package in real-time.
+                               </p>
+                               <a
+                                 href={order.tracking_url}
+                                 target="_blank"
+                                 rel="noopener noreferrer"
+                                 className="inline-flex items-center gap-2 py-2 px-4 bg-zinc-900 text-white text-[9px] font-black uppercase tracking-widest hover:bg-secondary transition-all rounded-sm"
+                               >
+                                 <ExternalLink size={10} /> Track Your Order
+                               </a>
+                             </div>
+                           ) : (
+                             <p className="text-[8px] text-zinc-400 uppercase tracking-widest">Tracking link will be available once your order is shipped.</p>
+                           )}
                         </div>
                       )}
                     </div>
