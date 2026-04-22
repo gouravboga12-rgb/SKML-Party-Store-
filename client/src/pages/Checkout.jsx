@@ -84,11 +84,7 @@ const Checkout = () => {
           const verifyRes = await fetch(`${import.meta.env.VITE_API_URL}/api/order/verify`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              ...response,
-              userName: formData.fullName,
-              amount: totalAmount
-            })
+            body: JSON.stringify(response)
           });
           
           if (verifyRes.ok) {
