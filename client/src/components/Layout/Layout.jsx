@@ -14,7 +14,7 @@ const Layout = ({ children }) => {
     <div className="flex flex-col min-h-screen bg-white text-zinc-900 selection:bg-black selection:text-white transition-colors duration-500">
       <CartToast />
       <Header />
-      <main className="flex-grow pt-0 pb-20 lg:pb-0">
+      <main className="flex-grow pt-0 pb-20">
         {children}
       </main>
       {!isCheckout && <Footer />}
@@ -22,12 +22,12 @@ const Layout = ({ children }) => {
       {/* Bottom Navigation */}
       <BottomNav />
 
-      {/* Floating WhatsApp Button - raised above BottomNav on mobile */}
+      {/* Floating WhatsApp Button - raised above BottomNav */}
       <a
         href="https://wa.me/919398324095"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-24 lg:bottom-10 right-6 z-[110] h-14 w-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform duration-300 group"
+        className="fixed bottom-24 right-6 z-[110] h-14 w-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform duration-300 group"
         aria-label="Contact on WhatsApp"
       >
         <Phone size={26} />

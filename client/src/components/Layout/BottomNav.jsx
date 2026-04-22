@@ -25,7 +25,7 @@ const BottomNav = () => {
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 z-[100] lg:hidden bg-white/95 backdrop-blur-md border-t border-zinc-100 pb-[env(safe-area-inset-bottom)]"
+      className="fixed bottom-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-md border-t border-zinc-100 pb-[env(safe-area-inset-bottom)]"
     >
       <div className="flex items-center justify-around py-2">
         {navItems.map(({ label, icon: Icon, path, badge }) => {
