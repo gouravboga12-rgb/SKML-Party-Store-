@@ -167,9 +167,73 @@ const AdminReviews = () => {
         </div>
       </div>
 
-      {/* Reviews Table */}
-      <div className="bg-white border border-zinc-100 rounded-sm overflow-hidden shadow-sm">
-        <table className="w-full text-left border-collapse">
+      {/* Mobile Card View (Visible only on small screens) */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {filteredReviews.length > 0 ? (
+          filteredReviews.map((rev) => (
+            <div key={rev.id} className="bg-white border border-zinc-100 p-4 rounded-sm shadow-sm space-y-4">
+              <div className="flex justify-between items-start">
+                <div className="space-y-1">
+                  <p className="text-xs font-black text-zinc-900 uppercase tracking-tight">{rev.products?.name}</p>
+                  <p className="text-[10px] text-zinc-500 font-bold uppercase">{rev.user_name}</p>
+                </div>
+                <span className={`px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${
+                  rev.status === 'approved' ? 'bg-green-100 text-green-700' :
+                  rev.status === 'hidden' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+                }`}>
+                  {rev.status}
+                </span>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex gap-0.5">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star key={star} size={10} fill={rev.rating >= star ? 'currentColor' : 'none'} className={rev.rating >= star ? 'text-secondary' : 'text-zinc-200'} />
+                  ))}
+                </div>
+                <p className="text-xs text-zinc-600 font-light leading-relaxed italic">"{rev.comment}"</p>
+              </div>
+
+              <div className="pt-4 border-t border-zinc-50 flex gap-2">
+                {rev.status !== 'approved' && (
+                  <button 
+                    onClick={() => updateReviewStatus(rev.id, 'approved')}
+                    disabled={updating === rev.id}
+                    className="flex-1 py-2 bg-zinc-900 text-white text-[9px] font-black uppercase tracking-widest rounded-sm flex items-center justify-center gap-2"
+                  >
+                    <CheckCircle2 size={12} /> Approve
+                  </button>
+                )}
+                {rev.status !== 'hidden' && (
+                  <button 
+                    onClick={() => updateReviewStatus(rev.id, 'hidden')}
+                    disabled={updating === rev.id}
+                    className="flex-1 py-2 bg-zinc-100 text-zinc-600 text-[9px] font-black uppercase tracking-widest rounded-sm flex items-center justify-center gap-2"
+                  >
+                    <EyeOff size={12} /> Hide
+                  </button>
+                )}
+                <button 
+                  onClick={() => handleDeleteReview(rev.id)}
+                  disabled={updating === rev.id}
+                  className="p-2 bg-red-50 text-red-500 rounded-sm"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="p-10 text-center bg-white border border-zinc-100 rounded-sm opacity-20">
+            <MessageSquare size={32} className="mx-auto mb-2" />
+            <p className="text-[10px] font-black uppercase">No reviews found</p>
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Table View (Hidden on small screens) */}
+      <div className="hidden md:block bg-white border border-zinc-100 rounded-sm overflow-x-auto shadow-sm scrollbar-hide">
+        <table className="w-full text-left border-collapse min-w-[800px]">
           <thead>
             <tr className="bg-zinc-50 border-b border-zinc-100">
               <th className="p-6 text-[10px] font-black text-zinc-400 uppercase tracking-widest">Product & User</th>
@@ -207,7 +271,7 @@ const AdminReviews = () => {
                          {rev.status}
                        </span>
                        
-                       <div className="flex gap-1 ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                       <div className="flex gap-1 ml-4 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                           {rev.status !== 'approved' && (
                             <button 
                               onClick={() => updateReviewStatus(rev.id, 'approved')}
