@@ -1,10 +1,21 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { Trash2, Plus, Minus, ArrowRight, ArrowLeft, ShoppingBag, Truck } from 'lucide-react';
 
 const Cart = () => {
   const { cart, removeFromCart, updateQuantity, cartTotal } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleCheckoutClick = (e) => {
+    if (!user) {
+      e.preventDefault();
+      // Redirect to login but remember to come back to checkout
+      navigate('/login?redirect=checkout');
+    }
+  };
 
   if (cart.length === 0) {
     return (
@@ -40,7 +51,7 @@ const Cart = () => {
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-8" data-aos="fade-up">
             {cart.map((item) => (
-              <div key={item.id} className="flex flex-col sm:flex-row gap-6 pb-8 border-b border-zinc-100 group">
+              <div key={item.cartItemId} className="flex flex-col sm:flex-row gap-6 pb-8 border-b border-zinc-100 group">
                 {/* Image */}
                 <div className="w-full sm:w-32 aspect-square bg-zinc-50 rounded-sm overflow-hidden">
                   <img 
@@ -61,9 +72,19 @@ const Cart = () => {
                         {item.category.replace('-', ' ')}
                       </span>
                       <h3 className="text-zinc-900 text-lg font-bold uppercase tracking-tight">{item.name}</h3>
+                      {(item.selectedHeight && item.selectedWidth) ? (
+                        <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">
+                          Dimensions: {item.selectedHeight}ft x {item.selectedWidth}ft
+                        </p>
+                      ) : null}
+                      {item.lead_time && (
+                        <p className="text-[10px] text-secondary font-bold uppercase tracking-widest flex items-center gap-1">
+                          <Plus size={10} /> Ships in: {item.lead_time}
+                        </p>
+                      )}
                     </div>
                     <button 
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeFromCart(item.cartItemId)}
                       className="text-zinc-400 hover:text-red-500 transition-colors p-2"
                     >
                       <Trash2 size={18} />
@@ -74,12 +95,15 @@ const Cart = () => {
                     {/* Quantity Selector */}
                     <div className="flex items-center border border-zinc-200 self-start">
                       <button 
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
                         className="px-4 py-2 text-zinc-900 hover:bg-zinc-50 transition-colors"
                       ><Minus size={14} /></button>
-                      <span className="w-10 text-center text-zinc-900 text-xs font-bold">{item.quantity}</span>
+                      <div className="flex flex-col items-center px-1">
+                        <span className="w-10 text-center text-zinc-900 text-xs font-bold">{item.quantity}</span>
+                        {item.price_type === 'meter' && <span className="text-[8px] text-zinc-400 font-bold uppercase -mt-1">Meters</span>}
+                      </div>
                       <button 
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
                         className="px-4 py-2 text-zinc-900 hover:bg-zinc-50 transition-colors"
                       ><Plus size={14} /></button>
                     </div>
@@ -121,6 +145,7 @@ const Cart = () => {
               <div className="space-y-4 pt-6">
                 <Link 
                   to="/checkout" 
+                  onClick={handleCheckoutClick}
                   className="w-full py-4 bg-zinc-900 text-white font-bold uppercase tracking-widest text-xs hover:bg-secondary hover:text-white transition-all flex items-center justify-center gap-2"
                 >
                   Proceed to Checkout <ArrowRight size={16} />

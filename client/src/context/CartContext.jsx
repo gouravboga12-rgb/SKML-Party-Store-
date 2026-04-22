@@ -24,15 +24,18 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (product, quantity = 1) => {
     setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === product.id);
+      // Create a unique key for this specific configuration
+      const cartItemId = `${product.id}-${product.selectedColor || ''}-${product.selectedSize || ''}-${product.selectedHeight || ''}-${product.selectedWidth || ''}`;
+      
+      const existingItem = prevCart.find((item) => item.cartItemId === cartItemId);
       if (existingItem) {
         return prevCart.map((item) =>
-          item.id === product.id
+          item.cartItemId === cartItemId
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
-      return [...prevCart, { ...product, quantity }];
+      return [...prevCart, { ...product, cartItemId, quantity }];
     });
     
     // Set notification
@@ -45,15 +48,15 @@ export const CartProvider = ({ children }) => {
 
   const clearNotification = () => setNotification(null);
 
-  const removeFromCart = (productId) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+  const removeFromCart = (cartItemId) => {
+    setCart((prevCart) => prevCart.filter((item) => item.cartItemId !== cartItemId));
   };
 
-  const updateQuantity = (productId, quantity) => {
+  const updateQuantity = (cartItemId, quantity) => {
     if (quantity < 1) return;
     setCart((prevCart) =>
       prevCart.map((item) =>
-        item.id === productId ? { ...item, quantity } : item
+        item.cartItemId === cartItemId ? { ...item, quantity } : item
       )
     );
   };

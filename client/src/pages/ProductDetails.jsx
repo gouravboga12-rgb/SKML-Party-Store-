@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { products } from '../data/products';
+import { supabase } from '../lib/supabase';
 import { useCart } from '../context/CartContext';
 import { 
   ShoppingCart, 
@@ -13,55 +13,203 @@ import {
   ChevronLeft, 
   Maximize2,
   Check,
-  X
+  X,
+  Loader2
 } from 'lucide-react';
 import RatingStars from '../components/UI/RatingStars';
 import ProductCard from '../components/UI/ProductCard';
+import { useAuth } from '../context/AuthContext';
 
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { user } = useAuth();
   
   const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [height, setHeight] = useState(8); // Default height for Area items
+  const [width, setWidth] = useState(8);   // Default width for Area items
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState('');
   const [customSize, setCustomSize] = useState('');
   const [showZoom, setShowZoom] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState([]);
+
+  // Review States
+  const [reviews, setReviews] = useState([]);
+  const [hasPurchased, setHasPurchased] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
   
   const mainImageRef = useRef(null);
 
   useEffect(() => {
-    const foundProduct = products.find(p => p.id === parseInt(id));
-    if (foundProduct) {
-      setProduct(foundProduct);
-      setActiveImage(foundProduct.image);
+    fetchProductDetails();
+    fetchReviews();
+    window.scrollTo(0, 0);
+  }, [id]);
+
+  useEffect(() => {
+    if (user && id) {
+      checkPurchaseStatus();
+    }
+  }, [user, id]);
+
+  const fetchReviews = async () => {
+    try {
+      const isOwner = user?.email === 'trendingfabricstore@gmail.com';
       
-      // Select default color if available
-      if (foundProduct.colors && foundProduct.colors.length > 0) {
-        setSelectedColor(foundProduct.colors[0]);
-        setActiveImage(foundProduct.colors[0].image);
-      }
-      
-      // Select default size if available
-      if (foundProduct.sizes && foundProduct.sizes.length > 0) {
-        setSelectedSize(foundProduct.sizes[0]);
+      let query = supabase
+        .from('reviews')
+        .select('*')
+        .eq('product_id', id)
+        .order('created_at', { ascending: false });
+
+      // If not owner, only show approved reviews
+      if (!isOwner) {
+        query = query.eq('status', 'approved');
       }
 
-      // Filter related products
-      const related = products.filter(p => 
-        p.category === foundProduct.category && p.id !== foundProduct.id
-      ).slice(0, 4);
-      setRelatedProducts(related);
-      
-    } else {
-      navigate('/shop');
+      const { data, error } = await query;
+
+      if (!error) setReviews(data || []);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
     }
-    window.scrollTo(0, 0);
-  }, [id, navigate]);
+  };
+
+  const moderateReview = async (reviewId, newStatus) => {
+    try {
+      const { error } = await supabase
+        .from('reviews')
+        .update({ status: newStatus })
+        .eq('id', reviewId);
+
+      if (!error) {
+        fetchReviews();
+        alert(`Review ${newStatus} successfully.`);
+      }
+    } catch (error) {
+      console.error('Error moderating review:', error);
+    }
+  };
+
+  const deleteReview = async (reviewId) => {
+    if (!window.confirm('Delete this review permanently?')) return;
+    try {
+      const { error } = await supabase
+        .from('reviews')
+        .delete()
+        .eq('id', reviewId);
+
+      if (!error) fetchReviews();
+    } catch (error) {
+      console.error('Error deleting review:', error);
+    }
+  };
+
+  const checkPurchaseStatus = async () => {
+    try {
+      // Check if user has a DELIVERED order with this product
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`id, status, order_items!inner(product_id)`)
+        .eq('user_id', user.id)
+        .eq('order_items.product_id', id)
+        .eq('status', 'delivered')
+        .limit(1);
+
+      if (!error && data?.length > 0) {
+        setHasPurchased(true);
+      }
+    } catch (error) {
+      console.error('Error checking purchase status:', error);
+    }
+  };
+
+  const submitReview = async () => {
+    if (!newReview.comment) return;
+    try {
+      setSubmitting(true);
+      const { error } = await supabase
+        .from('reviews')
+        .insert({
+          product_id: id,
+          user_id: user.id,
+          user_name: user.user_metadata?.full_name || 'Verified Buyer',
+          rating: newReview.rating,
+          comment: newReview.comment,
+          status: 'approved'
+        });
+
+      if (error) throw error;
+      
+      setNewReview({ rating: 5, comment: '' });
+      fetchReviews();
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      alert('Failed to submit review. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const optimizeImage = (url, width = 1000) => {
+    if (!url || !url.includes('cloudinary.com')) return url;
+    return url.replace('/upload/', `/upload/q_auto,f_auto,w_${width}/`);
+  };
+
+  const fetchProductDetails = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch main product first
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', id)
+        .single();
+      
+      if (error || !data) {
+        console.error('Product fetch error:', error);
+        navigate('/shop');
+        return;
+      }
+
+      setProduct(data);
+      setActiveImage(data.image);
+      
+      if (data.colors?.length > 0) {
+        setSelectedColor(data.colors[0]);
+        if (data.colors[0].image) setActiveImage(data.colors[0].image);
+      }
+      
+      if (data.sizes?.length > 0) {
+        setSelectedSize(data.sizes[0]);
+      }
+
+      // Fetch related products in the background
+      supabase
+        .from('products')
+        .select('*')
+        .eq('category', data.category)
+        .neq('id', id)
+        .limit(4)
+        .then(({ data: related }) => {
+          setRelatedProducts(related || []);
+        });
+
+    } catch (err) {
+      console.error('System error:', err);
+      navigate('/shop');
+    } finally {
+      // Set a small delay to ensure UI transitions smoothly
+      setTimeout(() => setLoading(false), 300);
+    }
+  };
 
   const handleColorSelect = (color) => {
     setSelectedColor(color);
@@ -81,14 +229,24 @@ const ProductDetails = () => {
   const getCurrentPrice = () => {
     if (!product) return 0;
     let basePrice = product.price;
-    
-    // Check if the product is sold by meters (Home Decor category or size contains "Meter")
-    if (product.category === 'home-decor' || selectedSize?.toLowerCase().includes('meter')) {
-      const meters = parseInt(selectedSize) || 1;
-      return basePrice * meters;
+
+    // Check if the product is sold by meters
+    if (product.price_type === 'meter') {
+      return basePrice * quantity;
     }
-    
+
+    // Check if product is sold by Area (SqFt)
+    if (product.price_type === 'sqft') {
+      return basePrice * height * width * quantity;
+    }
+
     return basePrice;
+  };
+
+  const getSalePrice = () => {
+    const total = getCurrentPrice();
+    const discount = product?.discount_pct || 0;
+    return total * (1 - (discount / 100));
   };
 
   const handleAddToCart = () => {
@@ -101,7 +259,38 @@ const ProductDetails = () => {
     addToCart(productToCart, quantity);
   };
 
-  const isVideo = (url) => url?.toLowerCase().endsWith('.mp4');
+  const isVideo = (url) => {
+    if (!url) return false;
+    const urlStr = String(url).toLowerCase();
+    return urlStr.endsWith('.mp4') || 
+           urlStr.endsWith('.webm') || 
+           urlStr.endsWith('.ogg') ||
+           urlStr.includes('/video/upload/');
+  };
+
+  const getThumbnail = (url) => {
+    if (!url) return '';
+    const urlStr = String(url);
+    if (isVideo(urlStr)) {
+      // Improved Cloudinary thumbnail logic
+      if (urlStr.includes('/video/upload/')) {
+        return urlStr.replace('/video/upload/', '/video/upload/c_fill,g_center,h_200,w_200,so_0/').replace(/\.[^/.]+$/, ".jpg");
+      }
+      return 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=200&auto=format&fit=crop'; // Cinematic placeholder
+    }
+    return urlStr;
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 size={48} className="animate-spin text-zinc-900" />
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">Loading Product Details</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!product) return null;
 
@@ -119,28 +308,36 @@ const ProductDetails = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
           {/* Left: Image Gallery */}
-          <div className="lg:col-span-1 flex lg:flex-col gap-3 order-2 lg:order-1 overflow-x-auto lg:overflow-x-visible pb-4 lg:pb-0 scrollbar-hide">
-            {(product.images || [product.image]).map((img, idx) => (
+          <div className="lg:col-span-1 flex lg:flex-col gap-3 order-2 lg:order-1 overflow-x-auto lg:overflow-x-visible pb-4 lg:pb-0 scrollbar-hide" data-aos="fade-right" data-aos-duration="600">
+            {[...new Set([product.image, ...(Array.isArray(product.images) ? product.images : [])])].filter(Boolean).map((img, idx) => (
               <button
                 key={idx}
                 onClick={() => setActiveImage(img)}
                 className={`flex-shrink-0 w-20 h-24 border-2 transition-all ${
                   activeImage === img ? 'border-zinc-900 shadow-md scale-105' : 'border-transparent opacity-60 hover:opacity-100'
-                } rounded-sm overflow-hidden bg-zinc-50`}
+                } rounded-sm overflow-hidden bg-zinc-100 relative group`}
               >
-                {isVideo(img) ? (
-                  <div className="w-full h-full flex items-center justify-center bg-zinc-900">
-                    <Star size={16} className="text-white animate-pulse" />
+                <img 
+                  src={optimizeImage(img, 200)} 
+                  alt="" 
+                  className="w-full h-full object-cover transition-opacity duration-300" 
+                  onError={(e) => {
+                    e.target.src = 'https://images.unsplash.com/photo-1517142089942-ba376ce32a2e?q=80&w=200&auto=format&fit=crop';
+                  }}
+                />
+                {isVideo(img) && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-colors">
+                    <div className="w-9 h-9 bg-white/90 rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                      <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-zinc-900 border-b-[6px] border-b-transparent ml-1"></div>
+                    </div>
                   </div>
-                ) : (
-                  <img src={img} alt={`${product.name} shadow ${idx}`} className="w-full h-full object-cover" />
                 )}
               </button>
             ))}
           </div>
 
           {/* Center: Main Image Viewer */}
-          <div className="lg:col-span-6 order-1 lg:order-2 space-y-4" data-aos="fade-up">
+          <div className="lg:col-span-6 order-1 lg:order-2 space-y-4" data-aos="fade-up" data-aos-duration="600">
             <div 
               className="relative aspect-[4/5] bg-zinc-50 rounded-sm overflow-hidden border border-zinc-100 cursor-zoom-in"
               onClick={() => setShowZoom(true)}
@@ -157,7 +354,7 @@ const ProductDetails = () => {
               ) : (
                 <img 
                   ref={mainImageRef}
-                  src={activeImage} 
+                  src={optimizeImage(activeImage, 1000)} 
                   alt={product.name} 
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                   onError={(e) => {
@@ -172,24 +369,44 @@ const ProductDetails = () => {
           </div>
 
           {/* Right: Product Info */}
-          <div className="lg:col-span-5 order-3 space-y-8" data-aos="fade-left">
+          <div className="lg:col-span-5 order-3 space-y-8" data-aos="fade-left" data-aos-duration="600">
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-secondary text-xs uppercase tracking-[0.3em] font-medium block">
-                  {product.category.replace('-', ' ')}
-                </span>
-                <RatingStars rating={product.rating || 4.5} count={product.reviewsCount || 0} />
-              </div>
-              
-              <h1 className="text-3xl md:text-5xl font-black text-zinc-900 uppercase tracking-tight leading-tight">
-                {product.name}
-              </h1>
-              
               <div className="flex items-baseline gap-4">
-                <p className="text-3xl font-bold text-zinc-900 tracking-tight">₹{getCurrentPrice().toLocaleString()}</p>
-                <span className="text-zinc-400 line-through text-sm">₹{(getCurrentPrice() * 1.5).toFixed(0)}</span>
-                <span className="text-green-600 text-xs font-bold uppercase tracking-widest">33% OFF</span>
+                <p className="text-3xl font-bold text-zinc-900 tracking-tight">
+                  ₹{getSalePrice().toLocaleString()}
+                  <span className="text-sm text-zinc-400 font-normal ml-1">/{product.price_unit || (product.price_type === 'meter' ? 'meter' : 'pc')}</span>
+                </p>
+                <div className="flex items-baseline gap-2">
+                  {product?.discount_pct > 0 && (
+                    <>
+                      <span className="text-zinc-400 line-through text-xs">₹{getCurrentPrice().toLocaleString()}</span>
+                      <span className="text-green-600 text-[10px] font-black uppercase tracking-widest bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
+                        {product.discount_pct}% OFF
+                      </span>
+                    </>
+                  )}
+                </div>
               </div>
+
+              {product.price_type !== 'fixed' && (
+                <div className="py-3 px-4 bg-zinc-900 rounded-sm inline-block shadow-lg">
+                   <p className="text-[10px] font-black text-white/60 uppercase tracking-[0.2em] mb-1">Estimated Total</p>
+                   <p className="text-xl font-bold text-white tracking-tight">₹{getSalePrice().toLocaleString()}</p>
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <span className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-widest rounded-full border ${
+                product.stock_status?.toLowerCase().includes('out') ? 'bg-red-50 text-red-600 border-red-100' : 'bg-zinc-900 text-white border-zinc-900 shadow-sm'
+              }`}>
+                {product.stock_status || 'In Stock'}
+              </span>
+              {product.lead_time && (
+                <span className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest rounded-full bg-secondary text-white border border-secondary shadow-sm">
+                  {product.lead_time}
+                </span>
+              )}
             </div>
 
             <p className="text-zinc-500 text-base font-light leading-relaxed">
@@ -234,8 +451,8 @@ const ProductDetails = () => {
             )}
 
 
-            {/* Sizes */}
-            {product.sizes && (
+            {/* Sizes (Only show for Fixed Price products) */}
+            {product.sizes && product.price_type !== 'meter' && (
               <div className="space-y-4">
                 <span className="text-zinc-900 text-[10px] uppercase tracking-widest font-bold">Select Size</span>
                 <div className="flex flex-wrap gap-3">
@@ -271,34 +488,95 @@ const ProductDetails = () => {
 
             {/* Actions */}
             <div className="space-y-4 pt-4">
+              {/* Multi-Dimensional Inputs (Area/SqFt) */}
+              {product.price_type === 'sqft' && (
+                <div className="grid grid-cols-2 gap-4 p-6 bg-zinc-50 border border-zinc-100 rounded-sm">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-1">Height (Ft)</label>
+                    <input 
+                      type="number" 
+                      value={height}
+                      onChange={(e) => setHeight(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-full p-4 bg-white border border-zinc-200 focus:border-zinc-900 outline-none text-sm font-bold"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-1">Width (Ft)</label>
+                    <input 
+                      type="number" 
+                      value={width}
+                      onChange={(e) => setWidth(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-full p-4 bg-white border border-zinc-200 focus:border-zinc-900 outline-none text-sm font-bold"
+                    />
+                  </div>
+                </div>
+              )}
+
               <div className="flex flex-col sm:flex-row items-center gap-4">
-                <div className="flex items-center border border-zinc-200 w-full sm:w-auto">
-                  <button 
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-6 py-4 text-zinc-900 hover:bg-zinc-50 transition-colors"
-                  >-</button>
-                  <input 
-                    type="number" 
-                    value={quantity}
-                    readOnly
-                    className="w-16 bg-transparent text-center text-zinc-900 text-sm font-bold focus:outline-none"
-                  />
-                  <button 
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="px-6 py-4 text-zinc-900 hover:bg-zinc-50 transition-colors"
-                  >+</button>
+                <div className="space-y-2 w-full sm:w-auto">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-1">
+                    {product.price_type === 'meter' ? 'Number of Meters' : product.price_type === 'sqft' ? 'Quantity (Sets)' : 'Quantity'}
+                  </label>
+                  <div className="flex items-center border border-zinc-200">
+                    <button 
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="px-6 py-4 text-zinc-900 hover:bg-zinc-50 transition-colors"
+                    >-</button>
+                    <input 
+                      type="number" 
+                      value={quantity}
+                      min={product.min_order || 1}
+                      onChange={(e) => setQuantity(Math.max(product.min_order || 1, parseInt(e.target.value) || 1))}
+                      className="w-16 bg-transparent text-center text-zinc-900 text-sm font-bold focus:outline-none"
+                    />
+                    <button 
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="px-6 py-4 text-zinc-900 hover:bg-zinc-50 transition-colors"
+                    >+</button>
+                  </div>
                 </div>
                 <button 
-                  onClick={handleAddToCart}
-                  className="flex-grow w-full py-4 bg-zinc-900 text-white font-bold uppercase tracking-widest text-xs hover:bg-secondary hover:text-white transition-all flex items-center justify-center gap-2"
+                  onClick={() => {
+                    const productToCart = {
+                      ...product,
+                      price: getSalePrice() / quantity, // Passing base unit price (discounted)
+                      selectedHeight: height,
+                      selectedWidth: width,
+                      selectedColor: selectedColor?.name,
+                      selectedSize: selectedSize === 'Custom' ? `Custom: ${customSize}` : selectedSize
+                    };
+                    addToCart(productToCart, quantity);
+                  }}
+                  disabled={product.stock_status?.toLowerCase().includes('out')}
+                  className={`flex-grow w-full py-4 font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 mt-auto ${
+                    product.stock_status?.toLowerCase().includes('out') 
+                      ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed' 
+                      : 'bg-zinc-900 text-white hover:bg-secondary'
+                  }`}
                 >
-                  <ShoppingCart size={18} /> Add to Cart
+                  <ShoppingCart size={18} /> {product.stock_status?.toLowerCase().includes('out') ? 'Out of Stock' : 'Add to Cart'}
                 </button>
               </div>
               
+              {product.min_order > 1 && (
+                <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest">* MINIMUM ORDER QUANTITY: {product.min_order} UNITS</p>
+              )}
+              
               <button 
                 className="w-full py-4 bg-zinc-100 text-zinc-900 font-bold uppercase tracking-widest text-xs hover:bg-zinc-900 hover:text-white transition-all flex items-center justify-center gap-2"
-                onClick={() => navigate('/checkout', { state: { directPurchase: { ...product, price: getCurrentPrice() }, quantity }})}
+                onClick={() => navigate('/checkout', { 
+                  state: { 
+                    directPurchase: { 
+                      ...product, 
+                      price: getCurrentPrice() / quantity,
+                      selectedColor: selectedColor?.name,
+                      selectedSize: selectedSize === 'Custom' ? `Custom: ${customSize}` : selectedSize,
+                      selectedHeight: height,
+                      selectedWidth: width
+                    }, 
+                    quantity 
+                  }
+                })}
               >
                 Buy Now
               </button>
@@ -380,21 +658,116 @@ const ProductDetails = () => {
             
             <div className="space-y-8">
               <h4 className="text-zinc-900 uppercase font-black tracking-widest mb-4">Customer Reviews</h4>
-              {product.reviews && product.reviews.length > 0 ? (
-                product.reviews.map((rev, i) => (
-                  <div key={i} className="space-y-2 pb-6 border-b border-zinc-50">
-                    <div className="flex justify-between items-center">
-                      <p className="text-xs font-bold uppercase text-zinc-900">{rev.user}</p>
-                      <span className="text-[10px] text-zinc-400">{rev.date}</span>
+              
+              {/* Review Submission Form (Only for Verified Buyers) */}
+              {user && hasPurchased && (
+                <div className="bg-zinc-50 p-6 rounded-sm space-y-4 border border-zinc-100 animate-in fade-in slide-in-from-top-4 duration-500">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-zinc-900">Write Your Review</p>
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          onClick={() => setNewReview({ ...newReview, rating: star })}
+                          className={`transition-all ${newReview.rating >= star ? 'text-secondary' : 'text-zinc-300'}`}
+                        >
+                          <Star size={16} fill={newReview.rating >= star ? 'currentColor' : 'none'} />
+                        </button>
+                      ))}
                     </div>
-                    <RatingStars rating={rev.rating} size={10} showCount={false} />
-                    <p className="text-zinc-500 text-sm font-light">{rev.comment}</p>
                   </div>
-                ))
-              ) : (
-                <p className="text-zinc-400 text-xs italic">No reviews yet. Be the first to share your experience!</p>
+                  <textarea
+                    placeholder="Share your experience with this boutique collection..."
+                    value={newReview.comment}
+                    onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                    className="w-full bg-white border border-zinc-200 p-4 text-xs font-medium focus:border-zinc-900 outline-none resize-none h-24"
+                  />
+                  <button
+                    onClick={submitReview}
+                    disabled={submitting || !newReview.comment}
+                    className="w-full py-3 bg-zinc-900 text-white text-[9px] font-black uppercase tracking-widest hover:bg-secondary transition-all disabled:opacity-50"
+                  >
+                    {submitting ? 'Submitting...' : 'Post Review'}
+                  </button>
+                </div>
               )}
-              <button className="text-[10px] font-bold uppercase tracking-widest border-b border-zinc-900 pb-1">Write a Review</button>
+
+              {/* Reviews List */}
+              <div className="space-y-6">
+                {reviews.length > 0 ? (
+                  reviews.map((rev) => (
+                    <div key={rev.id} className="space-y-3 pb-6 border-b border-zinc-100 group">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="flex items-center gap-3">
+                            <p className="text-xs font-black uppercase text-zinc-900">{rev.user_name}</p>
+                            <span className="px-2 py-0.5 bg-green-50 text-green-600 text-[7px] font-black uppercase tracking-[0.2em] rounded-full border border-green-100 flex items-center gap-1">
+                              <ShieldCheck size={8} /> Verified Buyer
+                            </span>
+                            {user?.email === 'trendingfabricstore@gmail.com' && (
+                              <span className={`px-2 py-0.5 text-[7px] font-black uppercase tracking-[0.2em] rounded-full border ${
+                                rev.status === 'approved' ? 'bg-zinc-900 text-white border-zinc-900' : 'bg-red-50 text-red-600 border-red-100'
+                              }`}>
+                                {rev.status}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[8px] text-zinc-400 uppercase tracking-widest mt-1">
+                            {new Date(rev.created_at).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+                          </p>
+                        </div>
+                        <div className="flex gap-0.5">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star key={star} size={10} fill={rev.rating >= star ? 'currentColor' : 'none'} className={rev.rating >= star ? 'text-secondary' : 'text-zinc-200'} />
+                          ))}
+                        </div>
+                      </div>
+                      <p className="text-zinc-500 text-sm font-light leading-relaxed">{rev.comment}</p>
+                      
+                      {/* Actions Bar */}
+                      <div className="flex items-center gap-4 mt-2">
+                        {/* User's own review actions */}
+                        {user && user.id === rev.user_id && (
+                          <button 
+                            onClick={() => deleteReview(rev.id)}
+                            className="text-[8px] font-black text-zinc-400 hover:text-red-500 uppercase tracking-widest transition-colors"
+                          >
+                            Delete My Review
+                          </button>
+                        )}
+
+                        {/* Owner Moderation Actions */}
+                        {user?.email === 'trendingfabricstore@gmail.com' && (
+                          <div className="flex items-center gap-3 border-l border-zinc-100 pl-4">
+                            <button 
+                              onClick={() => moderateReview(rev.id, rev.status === 'approved' ? 'hidden' : 'approved')}
+                              className={`text-[8px] font-black uppercase tracking-widest transition-colors ${
+                                rev.status === 'approved' ? 'text-zinc-400 hover:text-zinc-900' : 'text-green-600 hover:text-green-700'
+                              }`}
+                            >
+                              {rev.status === 'approved' ? 'Hide Review' : 'Approve Review'}
+                            </button>
+                            <button 
+                              onClick={() => deleteReview(rev.id)}
+                              className="text-[8px] font-black text-red-500 hover:text-red-700 uppercase tracking-widest transition-colors"
+                            >
+                              Force Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="py-12 text-center border border-dashed border-zinc-200 rounded-sm">
+                    <Star className="mx-auto text-zinc-200 mb-3" size={24} />
+                    <p className="text-zinc-400 text-[10px] uppercase font-black tracking-widest">No verified reviews yet</p>
+                    {(!user || !hasPurchased) && (
+                      <p className="text-zinc-300 text-[8px] uppercase tracking-widest mt-2 italic">Reviewing is unlocked once your product is officially delivered</p>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

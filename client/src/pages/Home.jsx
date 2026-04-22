@@ -1,11 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, Truck, ShieldCheck, Clock } from 'lucide-react';
-import { products, categories } from '../data/products';
+import { ArrowRight, CheckCircle2, Truck, ShieldCheck, Clock, Loader2 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 import ProductCard from '../components/UI/ProductCard';
 
 const Home = () => {
-  // Get 4 featured products for the homepage
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [prodRes, catRes] = await Promise.all([
+          // Only select essential columns for speed
+          supabase.from('products').select('id, name, price, image, discount_pct, price_type, stock_status, category, lead_time, price_unit').limit(8).order('created_at', { ascending: false }),
+          supabase.from('categories').select('id, name, image, description').limit(4)
+        ]);
+
+        if (prodRes.data) setProducts(prodRes.data);
+        if (catRes.data) setCategories(catRes.data);
+      } catch (error) {
+        console.error('Error fetching home data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const featuredProducts = products.slice(0, 4);
 
   return (
@@ -71,36 +96,44 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {categories.map((cat, idx) => (
-              <div 
-                key={cat.id} 
-                className="group relative h-[350px] sm:h-[450px] lg:h-[500px] overflow-hidden rounded-sm"
-                data-aos="fade-up"
-                data-aos-delay={idx * 100}
-              >
-                <img 
-                  src={cat.image} 
-                  alt={cat.name} 
-                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                  onError={(e) => {
-                    e.target.src = 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=1000&auto=format&fit=crop';
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                <div className="absolute bottom-0 left-0 p-8 w-full transform transition-transform duration-500">
-                  <h3 className="text-2xl font-bold text-white uppercase tracking-tight mb-2">{cat.name}</h3>
-                  <p className="text-gray-400 text-sm mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 whitespace-pre-wrap">
-                    {cat.description}
-                  </p>
-                  <Link 
-                    to={`/shop?category=${cat.id}`} 
-                    className="inline-block py-3 px-6 bg-white text-black text-[10px] font-bold uppercase tracking-widest hover:bg-secondary transition-colors"
-                  >
-                    Explore
-                  </Link>
+            {loading ? (
+              [1,2,3,4].map(i => (
+                <div key={i} className="h-[350px] sm:h-[450px] lg:h-[500px] bg-zinc-100 animate-pulse rounded-sm relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite]" />
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              categories.map((cat, idx) => (
+                <div 
+                  key={cat.id} 
+                  className="group relative h-[350px] sm:h-[450px] lg:h-[500px] overflow-hidden rounded-sm"
+                  data-aos="fade-up"
+                  data-aos-duration="600"
+                >
+                  <img 
+                    src={cat.image} 
+                    alt={cat.name} 
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                    onError={(e) => {
+                      e.target.src = 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=1000&auto=format&fit=crop';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                  <div className="absolute bottom-0 left-0 p-8 w-full transform transition-transform duration-500">
+                    <h3 className="text-2xl font-bold text-white uppercase tracking-tight mb-2">{cat.name}</h3>
+                    <p className="text-gray-400 text-sm mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 whitespace-pre-wrap">
+                      {cat.description}
+                    </p>
+                    <Link 
+                      to={`/shop?category=${cat.id}`} 
+                      className="inline-block py-3 px-6 bg-white text-black text-[10px] font-bold uppercase tracking-widest hover:bg-secondary transition-colors"
+                    >
+                      Explore
+                    </Link>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -114,9 +147,23 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {loading ? (
+              [1,2,3,4].map(i => (
+                <div key={i} className="space-y-4">
+                  <div className="aspect-[3/4] bg-zinc-100 animate-pulse rounded-sm relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite]" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-4 bg-zinc-100 rounded-sm w-3/4 animate-pulse" />
+                    <div className="h-3 bg-zinc-100 rounded-sm w-1/2 animate-pulse" />
+                  </div>
+                </div>
+              ))
+            ) : (
+              featuredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            )}
           </div>
 
           <div className="mt-16 text-center" data-aos="fade-up">

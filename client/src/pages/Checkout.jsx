@@ -1,17 +1,40 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
 import { CreditCard, Truck, ShieldCheck, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 const Checkout = () => {
-  const { cart, cartTotal, clearCart } = useCart();
+  const { cart: cartItems, cartTotal: cartTotalAmount, clearCart } = useCart();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [orderStatus, setOrderStatus] = useState('idle'); // idle, processing, success, error
 
+  // Check if this is a direct purchase (Buy Now)
+  const directPurchase = location.state?.directPurchase;
+  const directQuantity = location.state?.quantity || 1;
+
+  // Final data to use for checkout
+  const items = directPurchase 
+    ? [{ ...directPurchase, quantity: directQuantity }] 
+    : cartItems;
+
+  const totalAmount = directPurchase 
+    ? directPurchase.price * directQuantity 
+    : cartTotalAmount;
+
+  // If not logged in, they shouldn't even be here
+  if (!user) {
+    return <Navigate to="/login?redirect=checkout" replace />;
+  }
+
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
+    fullName: profile?.full_name || '',
+    email: user?.email || '',
     phone: '',
     address: '',
     city: '',
@@ -38,10 +61,10 @@ const Checkout = () => {
 
     try {
       // 1. Create order on the server
-      const response = await fetch('http://localhost:5000/api/order/create', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/order/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: cartTotal, receipt: `order_${Date.now()}` })
+        body: JSON.stringify({ amount: totalAmount, receipt: `order_${Date.now()}` })
       });
       
       if (!response.ok) throw new Error('Order creation failed');
@@ -49,7 +72,7 @@ const Checkout = () => {
 
       // 2. Open Razorpay Checkout
       const options = {
-        key: "rzp_test_YOUR_KEY", // Should be Key ID from Razorpay Dashboard
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Should be Key ID from Razorpay Dashboard
         amount: order.amount,
         currency: order.currency,
         name: "SKML Party Store",
@@ -58,7 +81,7 @@ const Checkout = () => {
         order_id: order.id,
         handler: async function (response) {
           // 3. Verify payment on the server
-          const verifyRes = await fetch('http://localhost:5000/api/order/verify', {
+          const verifyRes = await fetch(`${import.meta.env.VITE_API_URL}/api/order/verify`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(response)
@@ -95,10 +118,60 @@ const Checkout = () => {
     }
   };
 
-  const handleOrderSuccess = (paymentId) => {
-    setOrderStatus('success');
-    clearCart();
-    // In a real app, save order to DB here
+  const handleOrderSuccess = async (paymentId) => {
+    try {
+      setLoading(true);
+      // 1. Save main order to Supabase
+      const { data: orderData, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          user_id: user.id,
+          full_name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          pincode: formData.pincode,
+          total_amount: totalAmount,
+          payment_id: paymentId,
+          payment_status: 'completed',
+          order_notes: formData.notes,
+          status: 'pending'
+        })
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // 2. Save all items in the order with full details
+      const orderItems = items.map(item => ({
+        order_id: orderData.id,
+        product_id: Number(item.id),
+        product_name: item.name,
+        product_image: item.image,
+        quantity: item.quantity,
+        price_at_purchase: item.price,
+        selected_color: item.selectedColor || null,
+        selected_size: item.selectedSize || null,
+        selected_height: item.selectedHeight || null,
+        selected_width: item.selectedWidth || null
+      }));
+
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItems);
+
+      if (itemsError) throw itemsError;
+
+      setOrderStatus('success');
+      clearCart();
+    } catch (err) {
+      console.error('Database save error:', err);
+      // Even if DB fails, payment was successful, so we should handle gracefully
+      setOrderStatus('success'); 
+      clearCart();
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (orderStatus === 'success') {
@@ -245,7 +318,7 @@ const Checkout = () => {
               <h2 className="text-2xl font-bold text-zinc-900 uppercase tracking-tight">Your Order</h2>
               
               <div className="space-y-6 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
-                {cart.map((item) => (
+                {items.map((item) => (
                   <div key={item.id} className="flex gap-4">
                     <div className="h-16 w-16 shrink-0 bg-zinc-200 overflow-hidden">
                       <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
@@ -262,7 +335,7 @@ const Checkout = () => {
               <div className="space-y-4 pt-6 border-t border-zinc-200">
                 <div className="flex justify-between text-zinc-500 text-[10px] uppercase tracking-widest font-bold">
                   <span>Subtotal</span>
-                  <span>₹{cartTotal.toLocaleString()}</span>
+                  <span>₹{totalAmount.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-zinc-500 text-[10px] uppercase tracking-widest font-bold">
                   <span>Delivery</span>
@@ -270,7 +343,7 @@ const Checkout = () => {
                 </div>
                 <div className="pt-4 flex justify-between">
                   <span className="text-zinc-900 font-black uppercase tracking-[0.2em] text-sm">Total</span>
-                  <span className="text-2xl font-black text-zinc-900 tracking-tight">₹{cartTotal.toLocaleString()}</span>
+                  <span className="text-2xl font-black text-zinc-900 tracking-tight">₹{totalAmount.toLocaleString()}</span>
                 </div>
               </div>
 
