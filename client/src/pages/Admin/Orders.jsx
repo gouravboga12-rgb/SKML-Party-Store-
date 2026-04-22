@@ -459,21 +459,22 @@ const AdminOrders = () => {
         </div>
       </div>
 
+      {/* Edit Modal */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 no-print">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-4 no-print">
           <div className="absolute inset-0 bg-zinc-900/80 backdrop-blur-sm" onClick={() => setIsEditModalOpen(false)}></div>
-          <div className="bg-white w-full max-w-xl rounded-sm relative z-10 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-            <div className="p-8 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
+          <div className="bg-white w-full h-full md:h-auto md:max-w-xl md:rounded-sm relative z-10 shadow-2xl overflow-hidden flex flex-col max-h-screen md:max-h-[90vh]">
+            <div className="p-6 md:p-8 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
                <div>
-                  <h2 className="text-xl font-black text-zinc-900 uppercase tracking-tighter">Edit Order Details</h2>
-                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">Ref: #{editingOrder?.id.slice(0, 8).toUpperCase()}</p>
+                  <h2 className="text-lg md:text-xl font-black text-zinc-900 uppercase tracking-tighter">Edit Order Details</h2>
+                  <p className="text-[9px] md:text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">Ref: #{editingOrder?.id.slice(0, 8).toUpperCase()}</p>
                </div>
                <button onClick={() => setIsEditModalOpen(false)} className="p-2 hover:bg-zinc-200 rounded-full transition-colors">
                   <X size={20} />
                </button>
             </div>
             
-            <form onSubmit={handleUpdateOrder} className="p-8 space-y-6">
+            <form onSubmit={handleUpdateOrder} className="p-6 md:p-8 space-y-6 overflow-y-auto bg-white flex-1">
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-1">
                      <label className="text-[10px] font-black uppercase text-zinc-400">Customer Name</label>

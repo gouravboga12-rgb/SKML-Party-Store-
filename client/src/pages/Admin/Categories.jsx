@@ -125,17 +125,19 @@ const Categories = () => {
       </div>
 
       {/* Search & Stats */}
-      <div className="flex items-center gap-4 bg-white p-4 border border-zinc-200 rounded-sm shadow-sm">
-        <Search size={20} className="text-zinc-400 ml-2" />
-        <input 
-          type="text" 
-          placeholder="SEARCH CATEGORIES BY NAME OR ID..." 
-          className="flex-1 bg-transparent border-none outline-none text-xs font-bold uppercase tracking-widest text-zinc-900 placeholder:text-zinc-300"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      <div className="flex flex-col sm:flex-row items-center gap-4 bg-white p-4 border border-zinc-200 rounded-sm shadow-sm">
+        <div className="flex items-center gap-2 flex-1 w-full">
+          <Search size={20} className="text-zinc-400 ml-2" />
+          <input 
+            type="text" 
+            placeholder="SEARCH CATEGORIES..." 
+            className="flex-1 bg-transparent border-none outline-none text-xs font-bold uppercase tracking-widest text-zinc-900 placeholder:text-zinc-300"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
         <div className="h-6 w-px bg-zinc-100 mx-4 hidden sm:block" />
-        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] hidden sm:block">
+        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] whitespace-nowrap">
           Total: {categories.length}
         </span>
       </div>
@@ -195,19 +197,19 @@ const Categories = () => {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-0 md:p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
-          <div className="relative bg-white w-full max-w-xl rounded-sm shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-8 border-b border-zinc-100 flex items-center justify-between">
-              <h2 className="text-2xl font-black uppercase tracking-tighter">
+          <div className="relative bg-white w-full h-full md:h-auto md:max-w-xl md:rounded-sm shadow-2xl overflow-hidden flex flex-col max-h-screen md:max-h-[90vh]">
+            <div className="p-6 md:p-8 border-b border-zinc-100 flex items-center justify-between">
+              <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter">
                 {editingCategory ? 'Edit Category' : 'Create Category'}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-zinc-400 hover:text-zinc-900">
+              <button onClick={() => setIsModalOpen(false)} className="text-zinc-400 hover:text-zinc-900 p-2">
                 <X size={24} />
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-8 space-y-6 overflow-y-auto">
+            <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6 overflow-y-auto bg-white">
               <div className="space-y-6">
                 <div>
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 block mb-2">Category ID (Slug)</label>

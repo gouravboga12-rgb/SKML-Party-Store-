@@ -96,8 +96,8 @@ const AdminUsers = () => {
       </div>
 
       {/* Users Table */}
-      <div className="bg-white border border-zinc-100 rounded-sm overflow-hidden shadow-sm">
-        <table className="w-full">
+      <div className="bg-white border border-zinc-100 rounded-sm overflow-x-auto shadow-sm scrollbar-hide">
+        <table className="w-full min-w-[700px]">
           <thead>
             <tr className="bg-zinc-50 border-b border-zinc-100">
               <th className="text-left p-6 text-[10px] font-black text-zinc-400 uppercase tracking-widest">Customer</th>

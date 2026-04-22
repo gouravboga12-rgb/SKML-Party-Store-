@@ -244,8 +244,8 @@ const Products = () => {
       </div>
 
       {/* Product Table */}
-      <div className="bg-white border border-zinc-200 rounded-sm overflow-hidden shadow-sm">
-        <table className="w-full text-left">
+      <div className="bg-white border border-zinc-200 rounded-sm overflow-x-auto shadow-sm scrollbar-hide">
+        <table className="w-full text-left min-w-[1000px]">
           <thead className="bg-zinc-50 border-b border-zinc-200">
             <tr>
               <th className="px-6 py-5 text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500">Overview</th>
@@ -357,22 +357,22 @@ const Products = () => {
 
       {/* Modal / Side Panel */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-0 md:p-4">
           <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setIsModalOpen(false)} />
-          <div className="relative bg-white w-full max-w-4xl rounded-sm shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
-            <div className="p-8 border-b border-zinc-100 flex items-center justify-between bg-zinc-50">
+          <div className="relative bg-white w-full h-full md:h-auto md:max-w-4xl md:rounded-sm shadow-2xl flex flex-col max-h-screen md:max-h-[90vh] overflow-hidden">
+            <div className="p-4 md:p-8 border-b border-zinc-100 flex items-center justify-between bg-zinc-50">
               <div>
-                <h2 className="text-3xl font-black uppercase tracking-tighter">
+                <h2 className="text-xl md:text-3xl font-black uppercase tracking-tighter">
                   {editingProduct ? 'Edit Product' : 'Add New Product'}
                 </h2>
-                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] mt-2">Inventory Management System</p>
+                <p className="text-[8px] md:text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] mt-1 md:mt-2">Inventory Management System</p>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="w-12 h-12 flex items-center justify-center bg-white border border-zinc-200 rounded-full hover:bg-red-50 hover:text-red-500 transition-all">
-                <X size={20} />
+              <button onClick={() => setIsModalOpen(false)} className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white border border-zinc-200 rounded-full hover:bg-red-50 hover:text-red-500 transition-all">
+                <X size={18} />
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-10 bg-white">
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 md:p-10 bg-white">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 {/* Left Column: Media */}
                 <div className="space-y-8">

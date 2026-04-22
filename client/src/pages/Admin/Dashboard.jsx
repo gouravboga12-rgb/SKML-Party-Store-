@@ -121,8 +121,8 @@ const Dashboard = () => {
               View All
             </Link>
           </div>
-          <div className="bg-white border border-zinc-200 overflow-hidden rounded-sm">
-            <table className="w-full text-left">
+          <div className="bg-white border border-zinc-200 overflow-x-auto rounded-sm scrollbar-hide">
+            <table className="w-full text-left min-w-[600px]">
               <thead className="bg-zinc-50 border-b border-zinc-200">
                 <tr>
                   <th className="px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500">Product</th>

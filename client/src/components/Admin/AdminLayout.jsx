@@ -21,7 +21,7 @@ import { supabase } from '../../lib/supabase';
 const AdminLayout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   const menuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/admin' },
@@ -38,11 +38,24 @@ const AdminLayout = ({ children }) => {
     navigate('/admin/login');
   };
 
+  // Close sidebar on navigation (for mobile)
+  React.useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
+
   return (
     <div className="min-h-screen bg-zinc-50 flex">
+      {/* Sidebar Backdrop (Mobile Only) */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[45] lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside 
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-zinc-900 text-white transition-transform duration-300 transform ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-zinc-900 text-white transition-transform duration-300 ease-in-out transform ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:relative lg:translate-x-0 print:hidden`}
       >
@@ -56,7 +69,7 @@ const AdminLayout = ({ children }) => {
               <span className="font-bold tracking-tighter uppercase">Admin Panel</span>
             </Link>
             <button 
-              className="lg:hidden text-zinc-400 hover:text-white"
+              className="lg:hidden text-zinc-400 hover:text-white p-2"
               onClick={() => setIsSidebarOpen(false)}
             >
               <X size={20} />
@@ -64,7 +77,7 @@ const AdminLayout = ({ children }) => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2 mt-4">
+          <nav className="flex-1 p-4 space-y-2 mt-4 overflow-y-auto scrollbar-hide">
             {menuItems.map((item) => {
               const isActive = location.pathname === item.path;
               return (
@@ -110,27 +123,27 @@ const AdminLayout = ({ children }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden print:overflow-visible">
         {/* Header */}
-        <header className="h-16 bg-white border-b border-zinc-200 flex items-center justify-between px-6 sticky top-0 z-10 print:hidden">
+        <header className="h-16 bg-white border-b border-zinc-200 flex items-center justify-between px-4 md:px-6 sticky top-0 z-10 print:hidden">
           <button 
-            className="lg:hidden text-zinc-600"
+            className="lg:hidden text-zinc-600 p-2 hover:bg-zinc-100 rounded-md transition-colors"
             onClick={() => setIsSidebarOpen(true)}
           >
             <Menu size={24} />
           </button>
           
-          <div className="flex items-center gap-4 ml-auto">
-            <div className="text-right hidden sm:block">
-              <p className="text-xs font-bold text-zinc-900 uppercase">Administrator</p>
-              <p className="text-[10px] text-zinc-500 uppercase">Super Admin</p>
+          <div className="flex items-center gap-3 md:gap-4 ml-auto">
+            <div className="text-right hidden xs:block">
+              <p className="text-[10px] md:text-xs font-bold text-zinc-900 uppercase">Administrator</p>
+              <p className="text-[8px] md:text-[10px] text-zinc-500 uppercase">Super Admin</p>
             </div>
-            <div className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center text-white text-xs font-bold">
+            <div className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center text-white text-xs font-bold ring-4 ring-zinc-50">
               AD
             </div>
           </div>
         </header>
 
         {/* Page Body */}
-        <main className="flex-1 overflow-y-auto p-6 md:p-10">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-10">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
