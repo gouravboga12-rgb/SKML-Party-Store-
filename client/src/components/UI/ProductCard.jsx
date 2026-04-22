@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Phone, Heart } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import RatingStars from './RatingStars';
@@ -45,35 +45,6 @@ const ProductCard = ({ product }) => {
           />
         </Link>
         
-        {/* Overlay Actions */}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-4 pointer-events-none">
-          <button 
-            tabIndex={0}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (product?.colors?.length > 0 || product?.sizes?.length > 0) {
-                 navigate(`/product/${product.id}`);
-              } else {
-                 addToCart({ ...product, price: salePrice });
-              }
-            }}
-            className="p-3 bg-white text-black rounded-full hover:bg-secondary transition-colors pointer-events-auto shadow-xl"
-            title={product?.colors?.length > 0 || product?.sizes?.length > 0 ? "Select Options" : "Add to Cart"}
-          >
-            <ShoppingCart size={20} />
-          </button>
-          <a 
-            href={`https://wa.me/919398324095?text=Hello, I am interested in: ${product?.name}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors pointer-events-auto shadow-xl"
-            title="Inquire via WhatsApp"
-          >
-            <Phone size={20} />
-          </a>
-        </div>
 
         {/* Wishlist Button */}
         <button 
