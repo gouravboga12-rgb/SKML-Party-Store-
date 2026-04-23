@@ -27,6 +27,27 @@ const ProductCard = ({ product }) => {
     return url.replace('/upload/', '/upload/q_auto,f_auto,w_600/');
   };
 
+  const isVideo = (url) => {
+    if (!url) return false;
+    const urlStr = String(url).toLowerCase();
+    return urlStr.endsWith('.mp4') || 
+           urlStr.endsWith('.webm') || 
+           urlStr.endsWith('.ogg') ||
+           urlStr.includes('/video/upload/');
+  };
+
+  const getThumbnail = (url) => {
+    if (!url) return '';
+    const urlStr = String(url);
+    if (isVideo(urlStr)) {
+      if (urlStr.includes('/video/upload/')) {
+        return urlStr.replace('/video/upload/', '/video/upload/c_fill,g_center,h_600,w_450,so_0/').replace(/\.[^/.]+$/, ".jpg");
+      }
+      return urlStr;
+    }
+    return optimizeImage(urlStr);
+  };
+
   return (
     <div 
       className="group relative bg-white overflow-hidden rounded-sm transition-all duration-500 hover:shadow-2xl hover:shadow-zinc-200/50 border border-zinc-100"
@@ -35,14 +56,28 @@ const ProductCard = ({ product }) => {
     >
       <div className="relative aspect-[3/4] overflow-hidden">
         <Link to={`/product/${product?.id}`} className="block h-full w-full">
-          <img
-            src={optimizeImage(product?.image) || 'https://images.unsplash.com/photo-1517142089942-ba376ce32a2e?q=80&w=1000&auto=format&fit=crop'}
-            alt={product?.name || 'Product'}
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-            onError={(e) => {
-              e.target.src = 'https://images.unsplash.com/photo-1517142089942-ba376ce32a2e?q=80&w=1000&auto=format&fit=crop';
-            }}
-          />
+          {isVideo(getThumbnail(product?.image)) ? (
+             <video 
+              src={product.image} 
+              muted 
+              playsInline 
+              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+              onMouseOver={(e) => e.target.play()}
+              onMouseOut={(e) => {
+                e.target.pause();
+                e.target.currentTime = 0;
+              }}
+            />
+          ) : (
+            <img
+              src={getThumbnail(product?.image) || 'https://via.placeholder.com/400x533?text=Product'}
+              alt={product?.name || 'Product'}
+              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+              onError={(e) => {
+                e.target.src = 'https://via.placeholder.com/400x533?text=Product';
+              }}
+            />
+          )}
         </Link>
         
 

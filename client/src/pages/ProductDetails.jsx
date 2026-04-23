@@ -276,7 +276,7 @@ const ProductDetails = () => {
       if (urlStr.includes('/video/upload/')) {
         return urlStr.replace('/video/upload/', '/video/upload/c_fill,g_center,h_200,w_200,so_0/').replace(/\.[^/.]+$/, ".jpg");
       }
-      return 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=200&auto=format&fit=crop'; // Cinematic placeholder
+      return urlStr; // Return video URL itself if not Cloudinary
     }
     return urlStr;
   };
@@ -309,37 +309,56 @@ const ProductDetails = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
           {/* Left: Image Gallery */}
           <div className="lg:col-span-1 flex lg:flex-col gap-3 order-2 lg:order-1 overflow-x-auto lg:overflow-x-visible pb-4 lg:pb-0 scrollbar-hide" data-aos="fade-right" data-aos-duration="600">
-            {[...new Set([product.image, ...(Array.isArray(product.images) ? product.images : [])])].filter(Boolean).map((img, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActiveImage(img)}
-                className={`flex-shrink-0 w-20 h-24 border-2 transition-all ${
-                  activeImage === img ? 'border-zinc-900 shadow-md scale-105' : 'border-transparent opacity-60 hover:opacity-100'
-                } rounded-sm overflow-hidden bg-zinc-100 relative group`}
-              >
-                <img 
-                  src={optimizeImage(img, 200)} 
-                  alt="" 
-                  className="w-full h-full object-cover transition-opacity duration-300" 
-                  onError={(e) => {
-                    e.target.src = 'https://images.unsplash.com/photo-1517142089942-ba376ce32a2e?q=80&w=200&auto=format&fit=crop';
-                  }}
-                />
-                {isVideo(img) && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-colors">
-                    <div className="w-9 h-9 bg-white/90 rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
-                      <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-zinc-900 border-b-[6px] border-b-transparent ml-1"></div>
+            {[...new Set([product.image, ...(Array.isArray(product.images) ? product.images : [])])].filter(Boolean).map((img, idx) => {
+              const thumbnail = getThumbnail(img);
+              const isVid = isVideo(img);
+              
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setActiveImage(img)}
+                  className={`flex-shrink-0 w-20 h-24 border-2 transition-all ${
+                    activeImage === img ? 'border-zinc-900 shadow-md scale-105' : 'border-transparent opacity-60 hover:opacity-100'
+                  } rounded-sm overflow-hidden bg-transparent relative group`}
+                >
+                  {isVideo(thumbnail) ? (
+                    <video 
+                      src={thumbnail} 
+                      muted 
+                      playsInline 
+                      className="w-full h-full object-cover"
+                      onMouseOver={(e) => e.target.play()}
+                      onMouseOut={(e) => {
+                        e.target.pause();
+                        e.target.currentTime = 0;
+                      }}
+                    />
+                  ) : (
+                    <img 
+                      src={thumbnail} 
+                      alt="" 
+                      className="w-full h-full object-cover transition-opacity duration-300" 
+                      onError={(e) => {
+                        e.target.src = 'https://via.placeholder.com/200x250?text=Media';
+                      }}
+                    />
+                  )}
+                  {isVid && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-colors pointer-events-none">
+                      <div className="w-9 h-9 bg-white/90 rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                        <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-zinc-900 border-b-[6px] border-b-transparent ml-1"></div>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </button>
-            ))}
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           {/* Center: Main Image Viewer */}
           <div className="lg:col-span-6 order-1 lg:order-2 space-y-4" data-aos="fade-up" data-aos-duration="600">
             <div 
-              className="relative aspect-[4/5] bg-zinc-50 rounded-sm overflow-hidden border border-zinc-100 cursor-zoom-in"
+              className="relative aspect-[4/5] bg-transparent rounded-sm overflow-hidden border border-zinc-100 cursor-zoom-in"
               onClick={() => setShowZoom(true)}
             >
               {isVideo(activeImage) ? (
@@ -358,7 +377,7 @@ const ProductDetails = () => {
                   alt={product.name} 
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                   onError={(e) => {
-                    e.target.src = 'https://images.unsplash.com/photo-1517142089942-ba376ce32a2e?q=80&w=1000&auto=format&fit=crop';
+                    e.target.src = 'https://via.placeholder.com/800x1000?text=Product+Image';
                   }}
                 />
               )}
