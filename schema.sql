@@ -26,6 +26,7 @@ CREATE TABLE products (
     reviews_count INT DEFAULT 0,
     colors JSONB DEFAULT '[]'::jsonb,
     sizes JSONB DEFAULT '[]'::jsonb,
+    dimensions JSONB DEFAULT '[]'::jsonb,
     reviews JSONB DEFAULT '[]'::jsonb,
     specifications JSONB DEFAULT '{}'::jsonb,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP

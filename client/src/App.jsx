@@ -36,6 +36,8 @@ const AdminMigration = lazy(() => import('./pages/Admin/Migration'));
 const AdminOrders = lazy(() => import('./pages/Admin/Orders'));
 const AdminReviews = lazy(() => import('./pages/Admin/Reviews'));
 const AdminUsers = lazy(() => import('./pages/Admin/Users'));
+const AdminCalendar = lazy(() => import('./pages/Admin/Calendar'));
+const AdminAnalytics = lazy(() => import('./pages/Admin/Analytics'));
 const AdminLogin = lazy(() => import('./pages/Admin/Login'));
 
 // Loading Fallback
@@ -110,6 +112,14 @@ function App() {
                 <Route 
                   path="/admin/users" 
                   element={<ProtectedRoute><AdminLayout><AdminUsers /></AdminLayout></ProtectedRoute>} 
+                />
+                <Route 
+                  path="/admin/calendar" 
+                  element={<ProtectedRoute><AdminLayout><AdminCalendar /></AdminLayout></ProtectedRoute>} 
+                />
+                <Route 
+                  path="/admin/analytics" 
+                  element={<ProtectedRoute><AdminLayout><AdminAnalytics /></AdminLayout></ProtectedRoute>} 
                 />
                 <Route 
                   path="/admin/migration" 

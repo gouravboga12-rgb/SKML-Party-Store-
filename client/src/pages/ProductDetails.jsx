@@ -35,6 +35,8 @@ const ProductDetails = () => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState('');
   const [customSize, setCustomSize] = useState('');
+  const [selectedDimension, setSelectedDimension] = useState('');
+  const [customDimension, setCustomDimension] = useState('');
   const [showZoom, setShowZoom] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState([]);
 
@@ -191,6 +193,10 @@ const ProductDetails = () => {
         setSelectedSize(data.sizes[0]);
       }
 
+      if (data.dimensions?.length > 0) {
+        setSelectedDimension(data.dimensions[0]);
+      }
+
       // Fetch related products in the background
       supabase
         .from('products')
@@ -235,11 +241,6 @@ const ProductDetails = () => {
       return basePrice * quantity;
     }
 
-    // Check if product is sold by Area (SqFt)
-    if (product.price_type === 'sqft') {
-      return basePrice * height * width * quantity;
-    }
-
     return basePrice;
   };
 
@@ -254,7 +255,8 @@ const ProductDetails = () => {
       ...product,
       price: getCurrentPrice(),
       selectedColor: selectedColor?.name,
-      selectedSize: selectedSize === 'Custom' ? `Custom: ${customSize}` : selectedSize
+      selectedSize: selectedSize === 'Custom' ? `Custom: ${customSize}` : selectedSize,
+      selectedDimension: selectedDimension === 'Custom' ? `Custom: ${customDimension}` : selectedDimension
     };
     addToCart(productToCart, quantity);
   };
@@ -470,8 +472,8 @@ const ProductDetails = () => {
             )}
 
 
-            {/* Sizes (Only show for Fixed Price products) */}
-            {product.sizes && product.price_type !== 'meter' && (
+            {/* Sizes (Show only when product has sizes, is not meter-priced, AND has no dimension variants) */}
+            {product.sizes && product.sizes.length > 0 && product.price_type !== 'meter' && (!product.dimensions || product.dimensions.length === 0) && (
               <div className="space-y-4">
                 <span className="text-zinc-900 text-[10px] uppercase tracking-widest font-bold">Select Size</span>
                 <div className="flex flex-wrap gap-3">
@@ -505,36 +507,50 @@ const ProductDetails = () => {
               </div>
             )}
 
+            {/* Dimensions (Show only when product has dimensions defined) */}
+            {product.dimensions && product.dimensions.length > 0 && (
+              <div className="space-y-4">
+                <span className="text-zinc-900 text-[10px] uppercase tracking-widest font-bold">
+                  Select Dimension: <span className="text-secondary">{String(selectedDimension).toUpperCase()}</span>
+                </span>
+                <div className="flex flex-wrap gap-3">
+                  {product.dimensions.map(dim => (
+                    <button
+                      key={dim}
+                      onClick={() => setSelectedDimension(dim)}
+                      className={`px-6 py-3 text-[10px] uppercase tracking-widest font-bold border transition-all ${
+                        String(selectedDimension).toLowerCase() === String(dim).toLowerCase()
+                        ? 'bg-zinc-900 text-white border-zinc-900'
+                        : 'text-zinc-400 border-zinc-200 hover:border-zinc-900'
+                      }`}
+                    >
+                      {dim}
+                    </button>
+                  ))}
+                </div>
+
+                {String(selectedDimension).toLowerCase() === 'custom' && (
+                  <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                    <label className="text-zinc-400 text-[9px] uppercase tracking-widest font-bold mb-2 block">Enter Your Dimensions (e.g. 14x20 ft)</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 14x20 ft"
+                      className="w-full border-b border-zinc-900 py-2 text-sm focus:outline-none focus:border-zinc-900 transition-colors uppercase tracking-widest"
+                      value={customDimension}
+                      onChange={(e) => setCustomDimension(e.target.value)}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Actions */}
             <div className="space-y-4 pt-4">
-              {/* Multi-Dimensional Inputs (Area/SqFt) */}
-              {product.price_type === 'sqft' && (
-                <div className="grid grid-cols-2 gap-4 p-6 bg-zinc-50 border border-zinc-100 rounded-sm">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-1">Height (Ft)</label>
-                    <input 
-                      type="number" 
-                      value={height}
-                      onChange={(e) => setHeight(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-full p-4 bg-white border border-zinc-200 focus:border-zinc-900 outline-none text-sm font-bold"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-1">Width (Ft)</label>
-                    <input 
-                      type="number" 
-                      value={width}
-                      onChange={(e) => setWidth(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-full p-4 bg-white border border-zinc-200 focus:border-zinc-900 outline-none text-sm font-bold"
-                    />
-                  </div>
-                </div>
-              )}
 
               <div className="flex flex-col sm:flex-row items-center gap-4">
                 <div className="space-y-2 w-full sm:w-auto">
                   <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-1">
-                    {product.price_type === 'meter' ? 'Number of Meters' : product.price_type === 'sqft' ? 'Quantity (Sets)' : 'Quantity'}
+                    {product.price_type === 'meter' ? 'Number of Meters' : 'Quantity'}
                   </label>
                   <div className="flex items-center border border-zinc-200">
                     <button 
@@ -558,11 +574,10 @@ const ProductDetails = () => {
                   onClick={() => {
                     const productToCart = {
                       ...product,
-                      price: getSalePrice() / quantity, // Passing base unit price (discounted)
-                      selectedHeight: height,
-                      selectedWidth: width,
+                      price: getSalePrice() / quantity,
                       selectedColor: selectedColor?.name,
-                      selectedSize: selectedSize === 'Custom' ? `Custom: ${customSize}` : selectedSize
+                      selectedSize: selectedSize === 'Custom' ? `Custom: ${customSize}` : selectedSize,
+                      selectedDimension: selectedDimension === 'Custom' ? `Custom: ${customDimension}` : selectedDimension
                     };
                     addToCart(productToCart, quantity);
                   }}
@@ -590,8 +605,7 @@ const ProductDetails = () => {
                       price: getCurrentPrice() / quantity,
                       selectedColor: selectedColor?.name,
                       selectedSize: selectedSize === 'Custom' ? `Custom: ${customSize}` : selectedSize,
-                      selectedHeight: height,
-                      selectedWidth: width
+                      selectedDimension: selectedDimension === 'Custom' ? `Custom: ${customDimension}` : selectedDimension
                     }, 
                     quantity 
                   }
@@ -601,7 +615,7 @@ const ProductDetails = () => {
               </button>
 
               <a 
-                href={`https://wa.me/919398324095?text=Hello, I want to inquire about: ${product.name} ${selectedColor ? `(Color: ${selectedColor.name})` : ''} ${selectedSize ? `(Size: ${selectedSize})` : ''}`}
+                href={`https://wa.me/919398324095?text=Hello, I want to inquire about: ${product.name} ${selectedColor ? `(Color: ${selectedColor.name})` : ''} ${selectedSize ? `(Size: ${selectedSize})` : ''} ${selectedDimension ? `(Dimension: ${selectedDimension === 'Custom' ? customDimension : selectedDimension})` : ''}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-4 border border-zinc-900 text-zinc-900 font-bold uppercase tracking-widest text-xs hover:bg-zinc-900 hover:text-white transition-all flex items-center justify-center gap-2"
@@ -615,7 +629,7 @@ const ProductDetails = () => {
               <div className="flex items-center gap-3">
                 <Truck size={20} className="text-secondary" />
                 <div className="text-left">
-                  <p className="text-zinc-900 text-[10px] font-bold uppercase tracking-widest leading-none mb-1">DCDT Delivery</p>
+                  <p className="text-zinc-900 text-[10px] font-bold uppercase tracking-widest leading-none mb-1">DTDC Delivery</p>
                   <p className="text-zinc-400 text-[10px] uppercase">Fast Shipping</p>
                 </div>
               </div>

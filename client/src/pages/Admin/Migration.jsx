@@ -4,9 +4,69 @@ import { products, categories } from '../../data/products';
 import { Database, AlertTriangle, CheckCircle2, Loader2, Play } from 'lucide-react';
 
 const Migration = () => {
+  const [isLocked, setIsLocked] = useState(true);
+  const [passInput, setPassInput] = useState('');
+  const [error, setError] = useState(false);
   const [status, setStatus] = useState('idle'); // idle, migrating, success, error
   const [logs, setLogs] = useState([]);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
+
+  const handleUnlock = (e) => {
+    e.preventDefault();
+    if (passInput === 'Revanth@11189') {
+      setIsLocked(false);
+      setError(false);
+    } else {
+      setError(true);
+      setPassInput('');
+      setTimeout(() => setError(false), 2000);
+    }
+  };
+
+  if (isLocked) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="w-full max-w-md p-10 bg-white border border-zinc-200 shadow-2xl rounded-sm space-y-8 animate-in fade-in zoom-in duration-500">
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 bg-zinc-900 rounded-full flex items-center justify-center mx-auto shadow-xl ring-8 ring-zinc-50">
+              <Database size={24} className="text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-black uppercase tracking-tighter">Secure Migration</h1>
+              <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em] mt-2 italic">Restricted Administrator Area</p>
+            </div>
+          </div>
+
+          <form onSubmit={handleUnlock} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-[9px] font-black uppercase tracking-widest text-zinc-500">Master Authorization Password</label>
+              <input 
+                type="password"
+                autoFocus
+                className={`w-full p-4 bg-zinc-50 border ${error ? 'border-red-500 shadow-red-50 ring-4 ring-red-50' : 'border-zinc-100'} outline-none text-center font-black tracking-[0.5em] transition-all focus:bg-white focus:border-zinc-900`}
+                value={passInput}
+                onChange={(e) => setPassInput(e.target.value)}
+                placeholder="••••••••"
+              />
+              {error && <p className="text-[8px] font-black text-red-500 uppercase tracking-widest text-center mt-2 animate-bounce">Access Denied: Invalid Password</p>}
+            </div>
+
+            <button 
+              type="submit"
+              className="w-full py-5 bg-zinc-900 text-white text-[10px] font-black uppercase tracking-[0.2em] hover:bg-zinc-800 transition-all shadow-lg active:scale-95"
+            >
+              Verify Identity
+            </button>
+          </form>
+
+          <div className="pt-6 border-t border-zinc-100 flex items-center gap-3 justify-center">
+             <AlertTriangle size={14} className="text-amber-500" />
+             <p className="text-[8px] font-black text-zinc-400 uppercase tracking-widest">Unauthorized access is logged</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const addLog = (message, type = 'info') => {
     setLogs(prev => [...prev.slice(-9), { message, type, time: new Date().toLocaleTimeString() }]);

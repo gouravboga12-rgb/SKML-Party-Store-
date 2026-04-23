@@ -75,7 +75,7 @@ const Checkout = () => {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Should be Key ID from Razorpay Dashboard
         amount: order.amount,
         currency: order.currency,
-        name: "SKML Party Store",
+        name: "SKML Fabric Store",
         description: "Order Checkout",
         image: "/logo.jpeg",
         order_id: order.id,
@@ -152,6 +152,7 @@ const Checkout = () => {
         price_at_purchase: item.price,
         selected_color: item.selectedColor || null,
         selected_size: item.selectedSize || null,
+        selected_dimension: item.selectedDimension || null,
         selected_height: item.selectedHeight || null,
         selected_width: item.selectedWidth || null
       }));
@@ -183,8 +184,8 @@ const Checkout = () => {
         <div className="text-center space-y-4 mb-12" data-aos="fade-up">
           <h1 className="text-4xl font-black text-zinc-900 uppercase tracking-tight">Order Confirmed!</h1>
           <p className="text-zinc-500 font-light tracking-widest uppercase text-sm">
-            Thank you for choosing S K M L Party Store. <br />
-            Our team will process your order and ship via <span className="text-secondary font-bold">DCDT Courier</span>.
+            Thank you for choosing SKML Fabric Store. <br />
+            Our team will process your order and ship via <span className="text-secondary font-bold">DTDC Courier</span>.
           </p>
         </div>
         <div className="flex flex-col gap-4 w-full max-w-xs" data-aos="fade-up" data-aos-delay="100">
@@ -287,9 +288,9 @@ const Checkout = () => {
                     <Truck size={20} />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-zinc-900 text-xs font-bold uppercase tracking-widest">Standard Delivery via DCDT</p>
+                    <p className="text-zinc-900 text-xs font-bold uppercase tracking-widest">Standard Delivery via DTDC</p>
                     <p className="text-zinc-500 text-[10px] uppercase leading-relaxed font-light">
-                      Safe and secure shipping through our partner DCDT courier. Expected delivery within 3-7 business days.
+                      Safe and secure shipping through our partner DTDC courier. Expected delivery within 3-7 business days.
                     </p>
                   </div>
                   <div className="ml-auto text-secondary text-[10px] font-bold uppercase tracking-widest">Free</div>

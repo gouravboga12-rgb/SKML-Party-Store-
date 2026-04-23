@@ -77,6 +77,11 @@ const Cart = () => {
                           Dimensions: {item.selectedHeight}ft x {item.selectedWidth}ft
                         </p>
                       ) : null}
+                      {item.selectedDimension && (
+                        <p className="text-[10px] text-indigo-600 font-bold uppercase tracking-widest">
+                          Dimension: {item.selectedDimension}
+                        </p>
+                      )}
                       {item.lead_time && (
                         <p className="text-[10px] text-secondary font-bold uppercase tracking-widest flex items-center gap-1">
                           <Plus size={10} /> Ships in: {item.lead_time}
@@ -153,10 +158,10 @@ const Cart = () => {
                 
                 <div className="p-4 bg-white rounded-sm border border-zinc-200 space-y-2">
                    <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-black flex items-center gap-2">
-                      <Truck size={14} /> DCDT Delivery
+                      <Truck size={14} /> DTDC Delivery
                    </p>
                    <p className="text-[10px] text-zinc-500 font-light">
-                      Orders are processed within 24 hours. Fast shipping via DCDT courier.
+                      Orders are processed within 24 hours. Fast shipping via DTDC courier.
                    </p>
                 </div>
               </div>

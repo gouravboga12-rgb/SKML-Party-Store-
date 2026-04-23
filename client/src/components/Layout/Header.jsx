@@ -63,8 +63,8 @@ const Header = () => {
   const announcements = [
     "SALE IS LIVE! PREMIUM BACKDROPS - SHOP NOW",
     "FREE CONSULTATION & CUSTOM SIZES AVAILABLE VIA WHATSAPP",
-    "FAST DCDT COURIER SHIPPING PAN-INDIA - ORDER TODAY",
-    "SKML PARTY STORE: CRAFTING ELEGANCE FOR EVERY CELEBRATION"
+    "FAST DTDC COURIER SHIPPING PAN-INDIA - ORDER TODAY",
+    "SKML FABRIC STORE: CRAFTING ELEGANCE FOR EVERY CELEBRATION"
   ];
 
   return (
@@ -91,9 +91,14 @@ const Header = () => {
           {/* Brand Logo (Left) */}
           <Link to="/" className="flex items-center gap-3 flex-shrink-0">
             <img src="/logo.jpeg" alt="SKML Logo" className="h-10 w-10 md:h-12 md:w-12 object-cover rounded-full border border-secondary/30 shadow-lg" />
-            <span className={`inline-block font-black text-[10px] sm:text-xs md:text-sm lg:text-base tracking-[0.2em] uppercase whitespace-nowrap transition-colors duration-300 ${shouldBeSolid ? 'text-zinc-900' : 'text-white'}`}>
-              SKML Party Store
-            </span>
+            <div className="flex flex-col leading-tight">
+              <span className={`font-black text-[10px] sm:text-xs md:text-sm lg:text-base tracking-[0.2em] uppercase whitespace-nowrap transition-colors duration-300 ${shouldBeSolid ? 'text-zinc-900' : 'text-white'}`}>
+                SKML Fabric Store
+              </span>
+              <span className={`text-[8px] sm:text-[9px] font-semibold tracking-[0.35em] uppercase whitespace-nowrap transition-colors duration-300 ${shouldBeSolid ? 'text-secondary' : 'text-white/70'}`}>
+                Indana
+              </span>
+            </div>
           </Link>
 
           {/* Search Bar (Center) */}

@@ -55,7 +55,7 @@ const Home = () => {
             <span className="text-secondary text-xs uppercase tracking-[0.3em] font-medium">Est. 2026 | S K M L Finest</span>
           </div>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white uppercase tracking-tighter leading-tight max-w-5xl mx-auto drop-shadow-2xl">
-            SKML Party Store
+            SKML Fabric Store
           </h1>
           <p className="max-w-xl mx-auto text-white/90 text-lg font-light tracking-wide drop-shadow-lg">
             Elevate your events with premium backdrops and exquisite boutique fabrics. Seamlessly designed, gracefully delivered.
@@ -198,7 +198,7 @@ const Home = () => {
             <div className="space-y-8" data-aos="fade-left">
               <span className="text-secondary text-xs uppercase tracking-[0.3em]">Our Story</span>
               <h2 className="text-4xl md:text-5xl font-bold text-zinc-900 uppercase tracking-tight leading-tight">
-                SKML Party Store: Crafting Elegance for Every Celebration.
+                SKML Fabric Store: Crafting Elegance for Every Celebration.
               </h2>
               <p className="text-zinc-600 text-lg font-light leading-relaxed">
                 We provide high-quality event backdrops and stylish boutique fabrics. 
@@ -209,7 +209,7 @@ const Home = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
                 {[
                   "Quality Assurance",
-                  "Fast DCDT Delivery",
+                  "Fast DTDC Delivery",
                   "Retail & Wholesale",
                   "Expert Consultation",
                   "Trendsetting Designs",
@@ -240,9 +240,9 @@ const Home = () => {
               <div className="h-16 w-16 bg-zinc-50 rounded-full flex items-center justify-center mx-auto mb-6 text-zinc-900">
                 <Truck size={32} />
               </div>
-              <h3 className="text-zinc-900 font-bold uppercase tracking-widest">DCDT Shipping</h3>
+              <h3 className="text-zinc-900 font-bold uppercase tracking-widest">DTDC Shipping</h3>
               <p className="text-zinc-500 text-sm leading-relaxed">
-                Fast and reliable online delivery handled by our trusted partner DCDT courier.
+                Fast and reliable online delivery handled by our trusted partner DTDC courier.
               </p>
             </div>
             <div className="text-center space-y-4" data-aos="fade-up" data-aos-delay="100">
@@ -274,7 +274,7 @@ const Home = () => {
            <h2 className="text-4xl md:text-5xl font-bold text-zinc-900 uppercase tracking-tight">Visit Our Store</h2>
            <p className="text-zinc-600 max-w-2xl mx-auto font-light">
              Located in the heart of the textile hub, we welcome you to experience our fabrics firsthand. 
-             For online orders, our premium DCDT delivery ensures your purchase reaches you safely.
+             For online orders, our premium DTDC delivery ensures your purchase reaches you safely.
            </p>
            <div className="pt-8">
               <div className="inline-flex flex-col md:flex-row gap-12 text-left">
@@ -286,7 +286,7 @@ const Home = () => {
                 <div className="space-y-4">
                   <p className="text-secondary text-xs uppercase tracking-widest font-bold">Location</p>
                   <p className="text-zinc-900 text-sm">Doddi Ramarao (Owner)</p>
-                  <p className="text-zinc-900 text-sm">SKML Party Store</p>
+                  <p className="text-zinc-900 text-sm">SKML Fabric Store</p>
                   <p className="text-zinc-900 text-sm">Andhra Pradesh, India</p>
                 </div>
               </div>

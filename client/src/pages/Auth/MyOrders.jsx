@@ -117,6 +117,7 @@ const MyOrders = () => {
                             <div className="flex flex-wrap gap-2 mt-0.5">
                               {item.selected_color && <span className="text-[7px] font-black text-zinc-400 uppercase tracking-tighter">Color: {item.selected_color}</span>}
                               {item.selected_size && <span className="text-[7px] font-black text-zinc-400 uppercase tracking-tighter">Size: {item.selected_size}</span>}
+                              {item.selected_dimension && <span className="text-[7px] font-black text-zinc-400 uppercase tracking-tighter">Dim: {item.selected_dimension}</span>}
                               {item.selected_height && item.selected_width && (
                                 <span className="text-[7px] font-black text-zinc-400 uppercase tracking-tighter">
                                   {Number(item.selected_height)}x{Number(item.selected_width)} FT
@@ -141,7 +142,7 @@ const MyOrders = () => {
                       
                       {order.tracking_id && (
                         <div className="mt-4 p-3 bg-secondary/5 border-l-2 border-secondary rounded-r-sm space-y-2">
-                           <p className="text-[7px] font-black text-secondary/60 uppercase tracking-[0.2em]">DCDT Tracking ID</p>
+                           <p className="text-[7px] font-black text-secondary/60 uppercase tracking-[0.2em]">DTDC Tracking ID</p>
                            <p className="text-sm font-black text-secondary tracking-widest uppercase italic">{order.tracking_id}</p>
                            {order.tracking_url ? (
                              <div className="pt-2 border-t border-secondary/10">

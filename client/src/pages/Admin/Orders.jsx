@@ -343,7 +343,7 @@ const AdminOrders = () => {
                   <div className="flex items-center gap-8 mr-12">
                      {order.tracking_id && (
                        <div className="text-right hidden sm:block">
-                         <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1">DCDT Tracking ID</p>
+                         <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1">DTDC Tracking ID</p>
                          <p className="text-xs font-black text-secondary tracking-widest uppercase">{order.tracking_id}</p>
                          {order.tracking_url && (
                            <a
@@ -389,7 +389,7 @@ const AdminOrders = () => {
                         <p className="text-[10px] text-zinc-500 uppercase font-medium leading-relaxed">{order.address}, {order.pincode}</p>
                         {order.tracking_id && (
                           <div className="mt-3 p-2 bg-zinc-50 border-l-2 border-secondary">
-                             <p className="text-[8px] font-black text-zinc-400 uppercase tracking-widest">DCDT TRACKING</p>
+                             <p className="text-[8px] font-black text-zinc-400 uppercase tracking-widest">DTDC TRACKING</p>
                              <p className="text-[10px] font-black text-secondary uppercase tracking-widest mt-0.5">{order.tracking_id}</p>
                           </div>
                         )}
@@ -413,6 +413,7 @@ const AdminOrders = () => {
                                 <div className="flex flex-wrap gap-2 mt-2">
                                   {item.selected_color && <span className="px-2 py-0.5 bg-zinc-900 text-white text-[8px] font-black uppercase tracking-widest rounded-sm">{item.selected_color}</span>}
                                   {item.selected_size && <span className="px-2 py-0.5 bg-secondary text-white text-[8px] font-black uppercase tracking-widest rounded-sm">{item.selected_size}</span>}
+                                  {item.selected_dimension && <span className="px-2 py-0.5 bg-indigo-600 text-white text-[8px] font-black uppercase tracking-widest rounded-sm">{item.selected_dimension}</span>}
                                   {item.selected_height && <span className="px-2 py-0.5 border border-zinc-200 text-zinc-500 text-[8px] font-black uppercase tracking-widest rounded-sm">{Number(item.selected_height)}x{Number(item.selected_width)} FT</span>}
                                 </div>
                               </td>
@@ -493,8 +494,8 @@ const AdminOrders = () => {
                      <input required value={formData.pincode} onChange={(e) => setFormData({...formData, pincode: e.target.value})} className="w-full p-3 bg-zinc-50 border border-zinc-100 text-xs font-bold uppercase tracking-widest focus:bg-white focus:border-zinc-900 outline-none" />
                   </div>
                   <div className="space-y-1">
-                     <label className="text-[10px] font-black uppercase text-secondary">DCDT Tracking ID</label>
-                     <input placeholder="DCDT TRACKING #" value={formData.tracking_id} onChange={(e) => setFormData({...formData, tracking_id: e.target.value})} className="w-full p-3 bg-secondary/5 border border-secondary/20 text-xs font-black uppercase tracking-widest focus:bg-white focus:border-secondary outline-none text-secondary" />
+                     <label className="text-[10px] font-black uppercase text-secondary">DTDC Tracking ID</label>
+                     <input placeholder="DTDC TRACKING #" value={formData.tracking_id} onChange={(e) => setFormData({...formData, tracking_id: e.target.value})} className="w-full p-3 bg-secondary/5 border border-secondary/20 text-xs font-black uppercase tracking-widest focus:bg-white focus:border-secondary outline-none text-secondary" />
                   </div>
                   <div className="md:col-span-2 space-y-1">
                     <label className="text-[10px] font-black uppercase text-blue-600 flex items-center gap-1"><ExternalLink size={10} /> Track URL (Optional)</label>
@@ -531,7 +532,7 @@ const AdminOrders = () => {
         <div id="invoice-root" className="hidden print-only bg-white p-10 text-black font-sans min-h-screen">
           <div className="flex justify-between items-start mb-12 border-b-2 border-black pb-8">
              <div>
-                <h1 className="text-3xl font-black uppercase tracking-tighter italic">SKML Party Store</h1>
+                <h1 className="text-3xl font-black uppercase tracking-tighter italic">SKML Fabric Store</h1>
                 <p className="text-[10px] font-bold uppercase tracking-widest mt-1">Official Invoice / Receipt</p>
              </div>
              <div className="text-right">
@@ -548,7 +549,7 @@ const AdminOrders = () => {
              </div>
              <div className="text-right space-y-1">
                 <p className="text-[8px] font-black uppercase text-zinc-400 mb-2 tracking-[0.2em]">Shipped Via:</p>
-                <p className="text-base font-black uppercase text-zinc-900">DCDT Courier Service</p>
+                <p className="text-base font-black uppercase text-zinc-900">DTDC Courier Service</p>
                 <p className="text-[10px] font-medium uppercase text-zinc-500">Express Delivery</p>
                 {activeInvoice.tracking_id && <p className="text-[10px] font-black text-secondary uppercase mt-2">Tracking: {activeInvoice.tracking_id}</p>}
              </div>
@@ -569,6 +570,7 @@ const AdminOrders = () => {
                          <div className="flex flex-wrap gap-4 mt-3">
                             {item.selected_color && <div className="px-2 py-1 bg-zinc-100 border border-zinc-200 text-black text-[8px] font-black uppercase tracking-widest rounded-sm">Color: {item.selected_color}</div>}
                             {item.selected_size && <div className="px-2 py-1 bg-zinc-100 border border-zinc-200 text-black text-[8px] font-black uppercase tracking-widest rounded-sm">Size: {item.selected_size}</div>}
+                            {item.selected_dimension && <div className="px-2 py-1 bg-zinc-100 border border-zinc-200 text-black text-[8px] font-black uppercase tracking-widest rounded-sm">Dim: {item.selected_dimension}</div>}
                             {item.selected_height && <div className="px-2 py-1 bg-zinc-100 border border-zinc-200 text-black text-[8px] font-black uppercase tracking-widest rounded-sm">Dim: {Number(item.selected_height)}x{Number(item.selected_width)} FT</div>}
                          </div>
                      </td>
@@ -587,7 +589,7 @@ const AdminOrders = () => {
           </div>
           <div className="mt-32 pt-12 border-t border-zinc-100 flex justify-between items-end">
              <div className="space-y-1">
-                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-secondary">SKML Party Store</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-secondary">SKML Fabric Store</p>
                 <p className="text-[8px] text-zinc-400 uppercase">Global Fulfillment Center | +91 9398324095</p>
              </div>
              <div className="text-right">

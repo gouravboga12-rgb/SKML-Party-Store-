@@ -26,6 +26,11 @@ CREATE TABLE IF NOT EXISTS public.order_items (
     product_image TEXT,
     quantity INTEGER NOT NULL,
     price_at_purchase DECIMAL(12,2) NOT NULL,
+    selected_color TEXT,
+    selected_size TEXT,
+    selected_dimension TEXT,
+    selected_height DECIMAL(12,2),
+    selected_width DECIMAL(12,2),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

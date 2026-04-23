@@ -11,23 +11,18 @@ const Footer = () => {
           <div className="space-y-6">
             <Link to="/" className="flex items-center gap-3">
               <img src="/logo.jpeg" alt="Logo" className="h-10 w-10 object-cover rounded-full border border-secondary/30" />
-              <span className="font-bold text-base md:text-lg tracking-widest uppercase whitespace-nowrap">
-                S K M L PARTY STORE
-              </span>
+              <div className="flex flex-col leading-tight">
+                <span className="font-bold text-base md:text-lg tracking-widest uppercase whitespace-nowrap">
+                  SKML Fabric Store
+                </span>
+                <span className="text-[9px] font-semibold tracking-[0.35em] uppercase text-secondary whitespace-nowrap">
+                  Indana
+                </span>
+              </div>
             </Link>
             <p className="text-zinc-600 text-sm leading-relaxed max-w-xs">
               Premium event backdrops, boutique fabrics, and home decoration materials. Elevating your celebrations with elegance and quality.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="h-10 w-10 glass-effect rounded-full flex items-center justify-center hover:bg-zinc-900 hover:text-white transition-all shadow-sm">
-                {/* Instagram SVG */}
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-              </a>
-              <a href="#" className="h-10 w-10 glass-effect rounded-full flex items-center justify-center hover:bg-zinc-900 hover:text-white transition-all shadow-sm">
-                {/* Facebook SVG */}
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-              </a>
-            </div>
           </div>
 
           {/* Quick Links */}
@@ -45,11 +40,11 @@ const Footer = () => {
           <div className="space-y-6">
             <h4 className="text-sm font-bold uppercase tracking-[0.2em]">Shipping & Delivery</h4>
             <p className="text-zinc-600 text-sm leading-relaxed">
-              We partner with <span className="text-secondary font-bold">DCDT Courier Services</span> for fast and reliable online delivery across all regions.
+              We partner with <span className="text-secondary font-bold">DTDC Courier Services</span> for fast and reliable online delivery across all regions.
             </p>
             <div className="pt-2">
               <span className="px-4 py-2 border border-secondary/30 text-[10px] uppercase tracking-widest text-secondary rounded">
-                Daily Shipping via DCDT
+                Daily Shipping via DTDC
               </span>
             </div>
           </div>
@@ -76,10 +71,10 @@ const Footer = () => {
 
         <div className="pt-10 border-t border-zinc-200 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-zinc-400 text-[10px] uppercase tracking-widest">
-            © 2026 SKML Party Store. All Rights Reserved.
+            © 2026 SKML Fabric Store. All Rights Reserved.
           </p>
           <p className="text-zinc-400 text-[10px] uppercase tracking-widest">
-            Designed for Excellence
+            Developed by <a href="https://www.codtechitsolutions.com/" target="_blank" rel="noopener noreferrer" className="text-zinc-900 font-bold hover:text-secondary transition-colors underline decoration-zinc-200">CODTECH IT SOLUTION</a>
           </p>
         </div>
       </div>

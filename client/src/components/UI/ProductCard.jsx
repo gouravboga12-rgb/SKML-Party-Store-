@@ -129,7 +129,7 @@ const ProductCard = ({ product }) => {
         
         <button 
           onClick={() => {
-            if (product?.colors?.length > 0 || product?.sizes?.length > 0) {
+            if (product?.colors?.length > 0 || product?.sizes?.length > 0 || product?.dimensions?.length > 0) {
                navigate(`/product/${product.id}`);
             } else {
                addToCart({ ...product, price: salePrice });
@@ -137,7 +137,7 @@ const ProductCard = ({ product }) => {
           }}
           className="w-full mt-4 py-2 text-[10px] uppercase tracking-[0.2em] border border-zinc-200 hover:bg-zinc-900 hover:text-white transition-all duration-300 font-bold"
         >
-          {product?.colors?.length > 0 || product?.sizes?.length > 0 ? "Select Options" : "Quick Add"}
+          {product?.colors?.length > 0 || product?.sizes?.length > 0 || product?.dimensions?.length > 0 ? "Select Options" : "Quick Add"}
         </button>
       </div>
     </div>
