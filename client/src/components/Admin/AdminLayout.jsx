@@ -13,7 +13,9 @@ import {
   X,
   ShoppingBag,
   MessageSquare,
-  Users
+  Users,
+  BarChart3,
+  Calendar
 } from 'lucide-react';
 
 import { supabase } from '../../lib/supabase';
@@ -25,8 +27,8 @@ const AdminLayout = ({ children }) => {
 
   const menuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/admin' },
-    { name: 'Analytics', icon: <ChevronRight size={20} />, path: '/admin/analytics' },
-    { name: 'Calendar', icon: <ChevronRight size={20} />, path: '/admin/calendar' },
+    { name: 'Analytics', icon: <BarChart3 size={20} />, path: '/admin/analytics' },
+    { name: 'Calendar', icon: <Calendar size={20} />, path: '/admin/calendar' },
     { name: 'Products', icon: <Package size={20} />, path: '/admin/products' },
     { name: 'Orders', icon: <ShoppingBag size={20} />, path: '/admin/orders' },
     { name: 'Reviews', icon: <MessageSquare size={20} />, path: '/admin/reviews' },
