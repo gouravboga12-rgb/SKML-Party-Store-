@@ -7,4 +7,4 @@ Disallow: /checkout/
 Disallow: /my-orders/
 Disallow: /profile/
 
-Sitemap: https://skml-fabric-store.vercel.app/sitemap.xml
+Sitemap: https://skmlfabricstore.com/sitemap.xml

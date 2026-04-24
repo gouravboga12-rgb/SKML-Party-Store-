@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 const SEO = ({ title, description, keywords, image, url }) => {
   const siteName = "SKML Fabric Store";
   const fullTitle = title ? `${title} | ${siteName}` : siteName;
-  const siteUrl = "https://skml-fabric-store.vercel.app/"; // Update with custom domain later
+  const siteUrl = "https://skmlfabricstore.com/"; // Custom domain updated
   const defaultDescription = "Premium boutique fabrics and event backdrops in Visakhapatnam. Shop high-quality velvet, cotton, and party decoration materials online.";
 
   return (
