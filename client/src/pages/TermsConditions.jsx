@@ -41,7 +41,13 @@ const TermsConditions = () => {
           <section className="space-y-4">
             <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">4. Shipping & Delivery</h2>
             <p>
-              Delivery times are estimates and not guarantees. We ship via DTDC Courier. While we aim to process all orders within 24-48 hours, we are not responsible for delays caused by shipping partners or unforeseen circumstances.
+              Delivery times are estimates and not guarantees. We ship via **DTDC Courier** for pan-India orders. 
+            </p>
+            <p>
+              For customers located in **Visakhapatnam (Local)**, we offer ultra-fast delivery via **Rapido or Uber** courier services. These orders are typically delivered within 2-6 hours of processing.
+            </p>
+            <p>
+              While we aim to process all orders within 24-48 hours, we are not responsible for delays caused by shipping partners or unforeseen circumstances.
             </p>
           </section>
 

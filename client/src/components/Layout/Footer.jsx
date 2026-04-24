@@ -40,11 +40,14 @@ const Footer = () => {
           <div className="space-y-6">
             <h4 className="text-sm font-bold uppercase tracking-[0.2em]">Shipping & Delivery</h4>
             <p className="text-zinc-600 text-sm leading-relaxed">
-              We partner with <span className="text-secondary font-bold">DTDC Courier Services</span> for fast and reliable online delivery across all regions.
+              We partner with <span className="text-secondary font-bold">DTDC</span> for pan-India shipping. For local delivery in <span className="text-zinc-900 font-bold">Visakhapatnam</span>, we use <span className="text-secondary font-bold">Rapido & Uber</span> for ultra-fast same-day service.
             </p>
-            <div className="pt-2">
-              <span className="px-4 py-2 border border-secondary/30 text-[10px] uppercase tracking-widest text-secondary rounded">
-                Daily Shipping via DTDC
+            <div className="flex flex-wrap gap-2 pt-2">
+              <span className="px-3 py-1.5 border border-zinc-200 text-[8px] uppercase tracking-widest text-zinc-500 rounded-sm">
+                Pan-India: DTDC
+              </span>
+              <span className="px-3 py-1.5 border border-secondary/30 text-[8px] uppercase tracking-widest text-secondary rounded-sm">
+                Local: Rapido / Uber
               </span>
             </div>
           </div>

@@ -315,12 +315,20 @@ const Checkout = () => {
                     <Truck size={20} />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-zinc-900 text-xs font-bold uppercase tracking-widest">Standard Delivery via DTDC</p>
+                    <p className="text-zinc-900 text-xs font-bold uppercase tracking-widest">
+                      {(formData.address.toLowerCase().includes('visakhapatnam') || formData.address.toLowerCase().includes('vizag'))
+                        ? 'Local Fast Delivery (Rapido/Uber)' 
+                        : 'Standard Delivery via DTDC'}
+                    </p>
                     <p className="text-zinc-500 text-[10px] uppercase leading-relaxed font-light">
-                      Safe and secure shipping through our partner DTDC courier. Expected delivery within 3-7 business days.
+                      {(formData.address.toLowerCase().includes('visakhapatnam') || formData.address.toLowerCase().includes('vizag'))
+                        ? 'Instant local shipping for Visakhapatnam and nearby areas via Rapido or Uber Connect.'
+                        : 'Safe and secure shipping through our partner DTDC courier. Expected delivery within 3-7 business days.'}
                     </p>
                   </div>
-                  <div className="ml-auto text-secondary text-[10px] font-bold uppercase tracking-widest">Free</div>
+                  <div className="ml-auto text-secondary text-[10px] font-bold uppercase tracking-widest">
+                    {shippingTotal > 0 ? `₹${shippingTotal.toLocaleString()}` : 'Free'}
+                  </div>
                </div>
             </div>
 
@@ -386,6 +394,18 @@ const Checkout = () => {
                    </div>
                 </div>
               )}
+
+              <div className="mt-8 space-y-4">
+                 <div className="p-4 bg-white rounded-sm border border-zinc-100 shadow-sm space-y-2">
+                    <p className="text-[10px] text-zinc-900 font-black uppercase tracking-widest flex items-center gap-2">
+                       <Truck size={14} className="text-secondary" /> Fast Local Delivery
+                    </p>
+                    <p className="text-[9px] text-zinc-500 font-medium uppercase leading-relaxed">
+                       Same-day delivery available in <span className="text-zinc-900 font-bold italic">Visakhapatnam</span> via Rapido & Uber. 
+                       Pan-India orders shipped via DTDC.
+                    </p>
+                 </div>
+              </div>
             </div>
           </div>
         </div>
