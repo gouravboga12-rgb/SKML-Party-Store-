@@ -27,13 +27,23 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div className="space-y-6">
-            <h4 className="text-sm font-bold uppercase tracking-[0.2em]">Explore</h4>
-            <ul className="space-y-4 text-zinc-500 text-sm">
-              <li><Link to="/shop" className="hover:text-zinc-900 transition-colors tracking-widest uppercase">Shop All</Link></li>
-              <li><Link to="/#categories" className="hover:text-zinc-900 transition-colors tracking-widest uppercase">Categories</Link></li>
-              <li><Link to="/#about" className="hover:text-zinc-900 transition-colors tracking-widest uppercase">Our Story</Link></li>
-              <li><Link to="/#contact" className="hover:text-zinc-900 transition-colors tracking-widest uppercase">Contact</Link></li>
-            </ul>
+            <div>
+              <h4 className="text-sm font-bold uppercase tracking-[0.2em] mb-6">Explore</h4>
+              <ul className="space-y-4 text-zinc-500 text-sm">
+                <li><Link to="/shop" className="hover:text-zinc-900 transition-colors tracking-widest uppercase font-medium">Shop All</Link></li>
+                <li><Link to="/#categories" className="hover:text-zinc-900 transition-colors tracking-widest uppercase font-medium">Categories</Link></li>
+                <li><Link to="/#about" className="hover:text-zinc-900 transition-colors tracking-widest uppercase font-medium">Our Story</Link></li>
+                <li><Link to="/#contact" className="hover:text-zinc-900 transition-colors tracking-widest uppercase font-medium">Contact</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-bold uppercase tracking-[0.2em] mb-6 pt-4">Legal</h4>
+              <ul className="space-y-4 text-zinc-500 text-sm">
+                <li><Link to="/privacy-policy" className="hover:text-zinc-900 transition-colors tracking-widest uppercase font-medium">Privacy Policy</Link></li>
+                <li><Link to="/terms-conditions" className="hover:text-zinc-900 transition-colors tracking-widest uppercase font-medium">Terms & Conditions</Link></li>
+                <li><Link to="/refund-policy" className="hover:text-zinc-900 transition-colors tracking-widest uppercase font-medium">Refund Policy</Link></li>
+              </ul>
+            </div>
           </div>
 
           {/* Delivery Info */}
@@ -73,16 +83,9 @@ const Footer = () => {
         </div>
 
         <div className="pt-10 border-t border-zinc-200 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
-            <p className="text-zinc-400 text-[10px] uppercase tracking-widest">
-              © 2026 SKML Fabric Store. All Rights Reserved.
-            </p>
-            <div className="flex gap-6">
-              <Link to="/privacy-policy" className="text-zinc-400 text-[9px] uppercase tracking-widest hover:text-zinc-900 transition-colors">Privacy Policy</Link>
-              <Link to="/terms-conditions" className="text-zinc-400 text-[9px] uppercase tracking-widest hover:text-zinc-900 transition-colors">Terms</Link>
-              <Link to="/refund-policy" className="text-zinc-400 text-[9px] uppercase tracking-widest hover:text-zinc-900 transition-colors">Refund Policy</Link>
-            </div>
-          </div>
+          <p className="text-zinc-400 text-[10px] uppercase tracking-widest">
+            © 2026 SKML Fabric Store. All Rights Reserved.
+          </p>
           <p className="text-zinc-400 text-[10px] uppercase tracking-widest">
             Developed by <a href="https://codtechitsolutions.com/" target="_blank" rel="noopener noreferrer" className="text-zinc-900 font-bold hover:text-secondary transition-colors underline decoration-zinc-200">CODTECH IT SOLUTION</a>
           </p>
