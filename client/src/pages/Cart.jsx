@@ -159,11 +159,11 @@ const Cart = () => {
                 </Link>
                 
                 <div className="p-4 bg-white rounded-sm border border-zinc-200 space-y-2">
-                   <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-black flex items-center gap-2">
-                      <Truck size={14} /> DTDC Delivery
+                   <p className="text-[10px] text-zinc-900 uppercase tracking-widest font-black flex items-center gap-2">
+                      <Truck size={14} className="text-secondary" /> Shipping Partners
                    </p>
-                   <p className="text-[10px] text-zinc-500 font-light">
-                      Orders are processed within 24 hours. Fast shipping via DTDC courier.
+                   <p className="text-[10px] text-zinc-500 font-medium uppercase tracking-widest leading-relaxed">
+                      Pan-India via <span className="text-zinc-900 font-bold">DTDC</span>. Local (Vizag) same-day via <span className="text-secondary font-bold">Rapido & Uber</span>.
                    </p>
                 </div>
               </div>
