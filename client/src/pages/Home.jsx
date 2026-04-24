@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, Truck, ShieldCheck, Clock, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import ProductCard from '../components/UI/ProductCard';
+import SEO from '../components/SEO/SEO';
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -35,6 +36,11 @@ const Home = () => {
 
   return (
     <div className="bg-white transition-colors duration-1000">
+      <SEO 
+        title="Premium Boutique Fabrics & Event Backdrops"
+        description="Experience luxury with SKML Fabric Store. We provide high-quality boutique fabrics and exquisite event backdrops in Visakhapatnam. Shop velvet, cotton, and party decor materials online."
+        keywords="fabric store vizag, boutique fabrics visakhapatnam, event backdrops india, party decor fabrics, skml fabric store, velvet cloth online"
+      />
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         {/* Background Image */}

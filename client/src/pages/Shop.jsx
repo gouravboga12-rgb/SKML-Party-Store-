@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import ProductCard from '../components/UI/ProductCard';
+import SEO from '../components/SEO/SEO';
 import { SlidersHorizontal, Search, X, Loader2, ChevronDown } from 'lucide-react';
 
 const Shop = () => {
@@ -80,6 +81,12 @@ const Shop = () => {
 
   return (
     <div className="pt-32 pb-24 min-h-screen bg-white">
+      <SEO 
+        title="Shop Premium Boutique Fabrics"
+        description="Browse our full catalog of premium boutique fabrics and event backdrops. High-quality velvet, cotton, and party decor materials available for online order."
+        keywords="buy fabric online india, premium velvet cloth, event backdrop materials, shop fabrics visakhapatnam, party supplies online"
+        url="shop"
+      />
       <div className="container mx-auto px-4 md:px-8">
         {/* Header */}
         <div className="mb-12" data-aos="fade-right">

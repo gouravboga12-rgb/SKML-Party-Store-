@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import RatingStars from '../components/UI/RatingStars';
 import ProductCard from '../components/UI/ProductCard';
+import SEO from '../components/SEO/SEO';
 import { useAuth } from '../context/AuthContext';
 
 const ProductDetails = () => {
@@ -289,7 +290,14 @@ const ProductDetails = () => {
   if (!product) return null;
 
   return (
-    <div className="pt-32 pb-24 min-h-screen bg-white">
+    <div className="pt-32 pb-24 bg-white min-h-screen">
+      <SEO 
+        title={product.name}
+        description={`Buy ${product.name} at SKML Fabric Store. Premium ${product.category} boutique fabric. High quality, reliable delivery.`}
+        keywords={`${product.name}, ${product.category} fabric, boutique fabric, vizag store`}
+        image={product.image}
+        url={`product/${product.id}`}
+      />
       <div className="container mx-auto px-4 md:px-8">
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 mb-8 text-zinc-400 text-[10px] uppercase tracking-widest font-bold" data-aos="fade-right">
