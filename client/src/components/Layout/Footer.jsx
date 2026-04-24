@@ -69,10 +69,17 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="pt-10 border-t border-zinc-200 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-zinc-400 text-[10px] uppercase tracking-widest">
-            © 2026 SKML Fabric Store. All Rights Reserved.
-          </p>
+        <div className="pt-10 border-t border-zinc-200 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+            <p className="text-zinc-400 text-[10px] uppercase tracking-widest">
+              © 2026 SKML Fabric Store. All Rights Reserved.
+            </p>
+            <div className="flex gap-6">
+              <Link to="/privacy-policy" className="text-zinc-400 text-[9px] uppercase tracking-widest hover:text-zinc-900 transition-colors">Privacy Policy</Link>
+              <Link to="/terms-conditions" className="text-zinc-400 text-[9px] uppercase tracking-widest hover:text-zinc-900 transition-colors">Terms</Link>
+              <Link to="/refund-policy" className="text-zinc-400 text-[9px] uppercase tracking-widest hover:text-zinc-900 transition-colors">Refund Policy</Link>
+            </div>
+          </div>
           <p className="text-zinc-400 text-[10px] uppercase tracking-widest">
             Developed by <a href="https://codtechitsolutions.com/" target="_blank" rel="noopener noreferrer" className="text-zinc-900 font-bold hover:text-secondary transition-colors underline decoration-zinc-200">CODTECH IT SOLUTION</a>
           </p>
