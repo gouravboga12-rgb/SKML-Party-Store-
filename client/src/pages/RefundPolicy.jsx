@@ -5,64 +5,88 @@ const RefundPolicy = () => {
     <div className="pt-48 pb-24 min-h-screen bg-white">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="mb-16 space-y-4 text-center">
-          <h1 className="text-5xl font-black text-zinc-900 uppercase tracking-tighter italic">Refund Policy</h1>
+          <h1 className="text-5xl font-black text-zinc-900 uppercase tracking-tighter italic">Refund & Cancellation</h1>
           <p className="text-zinc-400 text-xs uppercase tracking-widest">Last Updated: April 2026</p>
         </div>
 
         <div className="prose prose-zinc max-w-none space-y-12 text-zinc-600 leading-relaxed font-light">
           <section className="space-y-4">
-            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">1. Eligibility for Refund</h2>
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">1. Cancellation Policy</h2>
             <p>
-              At SKML Fabric Store, we ensure all products are quality-checked before dispatch. Refunds are issued **exclusively** in the following case:
+              We understand that plans can change. However, due to the nature of our products:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>The product is received in a physically damaged condition.</li>
+              <li>Orders for standard (non-custom) items can be cancelled within **12 hours** of placement for a full refund.</li>
+              <li><strong>Important:</strong> Boutique fabrics and backdrops cut to specific custom dimensions (e.g., custom meters or height/width) **cannot** be cancelled once the cutting process has begun.</li>
             </ul>
           </section>
 
           <section className="space-y-4">
-            <div className="bg-zinc-900 p-8 rounded-sm text-white space-y-4 shadow-2xl">
-              <h2 className="text-xl font-black uppercase tracking-widest italic text-secondary">Mandatory: Unboxing Video Proof</h2>
+            <div className="bg-zinc-900 p-8 rounded-sm text-white space-y-6 shadow-2xl border-l-8 border-secondary">
+              <h2 className="text-2xl font-black uppercase tracking-widest italic text-secondary underline decoration-secondary/30 underline-offset-8">2. Refund Eligibility: Damage Claims</h2>
               <p className="text-zinc-300 font-medium leading-relaxed">
-                To protect against fraudulent claims and ensure transparency, we require a **continuous, unedited unboxing video** as proof of damage.
+                Refunds are granted **EXCLUSIVELY** in the case of products received in a physically damaged condition or if the wrong item was delivered.
               </p>
-              <div className="space-y-2 pt-2 border-t border-white/10">
-                <p className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 bg-secondary rounded-full"></span>
-                  The video must show the package seal being broken.
+              
+              <div className="space-y-4 pt-4 border-t border-white/10">
+                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white">The Mandatory Unboxing Rule:</h3>
+                <p className="text-zinc-400 text-xs leading-relaxed italic">
+                  To protect our small business and ensure a fair resolution, a **continuous, unedited unboxing video** is strictly mandatory to claim a refund.
                 </p>
-                <p className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 bg-secondary rounded-full"></span>
-                  The damage must be clearly visible in the video.
-                </p>
-                <p className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-secondary">
-                  No refund claims will be entertained without a valid unboxing video.
-                </p>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[10px] font-black uppercase tracking-widest text-zinc-300">
+                  <li className="flex items-center gap-3 bg-white/5 p-3 rounded-sm border border-white/10">
+                    <span className="w-2 h-2 bg-secondary rounded-full"></span>
+                    Video must start before opening the outer seal.
+                  </li>
+                  <li className="flex items-center gap-3 bg-white/5 p-3 rounded-sm border border-white/10">
+                    <span className="w-2 h-2 bg-secondary rounded-full"></span>
+                    Show the shipping label clearly.
+                  </li>
+                  <li className="flex items-center gap-3 bg-white/5 p-3 rounded-sm border border-white/10">
+                    <span className="w-2 h-2 bg-secondary rounded-full"></span>
+                    Capture the damage in one single shot.
+                  </li>
+                  <li className="flex items-center gap-3 bg-white/5 p-3 rounded-sm border border-white/10 text-secondary">
+                    <span className="w-2 h-2 bg-secondary rounded-full"></span>
+                    NO VIDEO = NO REFUND.
+                  </li>
+                </ul>
               </div>
             </div>
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">2. Refund Process & Timeline</h2>
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">3. Manual Refund Process</h2>
             <p>
-              Once your unboxing video is shared and the damage is verified by our team:
+              For security and verification, all refunds are initiated manually:
             </p>
-            <ul className="list-disc pl-6 space-y-2">
-              <li>The refund will be initiated directly to your original account after a **WhatsApp inquiry** is made and verified by the owner.</li>
-              <li>Please contact us on WhatsApp with your Order ID and the unboxing video proof to proceed.</li>
-              <li>The refunded amount will reflect in your bank account within **5-7 working days** after manual initiation.</li>
-            </ul>
+            <ol className="list-decimal pl-6 space-y-4">
+              <li>
+                <strong>WhatsApp Verification:</strong> Share your Order ID and the unboxing video proof with the owner on WhatsApp (**+91 9398324095**).
+              </li>
+              <li>
+                <strong>Review:</strong> Our team will review the proof and confirm the damage within 24-48 hours.
+              </li>
+              <li>
+                <strong>Initiation:</strong> Once verified, the refund will be initiated to your original payment account.
+              </li>
+              <li>
+                <strong>Timeline:</strong> The refunded amount will reflect in your bank account within **5-7 working days** after initiation.
+              </li>
+            </ol>
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">3. Custom Orders</h2>
-            <p>
-              Please note that boutique fabrics cut to specific custom dimensions are not eligible for returns or cancellations unless they arrive damaged (verified by unboxing video).
-            </p>
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">4. Non-Refundable Items</h2>
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Items damaged due to customer mishandling during opening (e.g., using sharp knives carelessly).</li>
+              <li>Products that have been used, washed, or altered.</li>
+              <li>Sale or discounted items (unless damaged).</li>
+            </ul>
           </section>
 
           <section className="space-y-4 text-center pt-12">
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400">Integrity & Quality • SKML Fabric Store</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400">Quality Assured • SKML Fabric Store • Visakhapatnam</p>
           </section>
         </div>
       </div>

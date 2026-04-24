@@ -11,57 +11,66 @@ const PrivacyPolicy = () => {
 
         <div className="prose prose-zinc max-w-none space-y-12 text-zinc-600 leading-relaxed font-light">
           <section className="space-y-4">
-            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">1. Information We Collect</h2>
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">1. Information Collection</h2>
             <p>
-              At SKML Fabric Store, we collect information that is necessary for processing your orders and providing a personalized shopping experience. This includes:
+              SKML Fabric Store ("we", "us", "our") is committed to protecting your privacy. We collect personal information when you visit our site, register an account, or place an order for our boutique fabrics and backdrops. This includes:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Personal identifiers (Name, Email, Phone Number)</li>
-              <li>Delivery information (Shipping Address, Pincode)</li>
-              <li>Transaction details (Order history, payment status)</li>
+              <li><strong>Personal Identification:</strong> Name, email address, and phone number.</li>
+              <li><strong>Shipping Details:</strong> Delivery address, city (Visakhapatnam or others), and pincode.</li>
+              <li><strong>Usage Data:</strong> IP address, browser type, and interaction with our products.</li>
             </ul>
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">2. How We Use Your Data</h2>
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">2. Use of Information</h2>
             <p>
-              Your data is used strictly for business operations, including:
+              The information we collect is used solely to enhance your shopping experience and fulfill our business obligations:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Processing and shipping your boutique fabric orders.</li>
-              <li>Communicating order updates via SMS or Email.</li>
-              <li>Providing customer support and responding to inquiries.</li>
-              <li>Preventing fraudulent transactions.</li>
+              <li>To process and deliver your orders via our shipping partners (DTDC, Rapido, or Uber).</li>
+              <li>To send order confirmations and shipping updates via SMS or Email.</li>
+              <li>To manage your account and provide personalized customer support.</li>
+              <li>To improve our website functionality and boutique collection based on user feedback.</li>
             </ul>
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">3. Third-Party Sharing</h2>
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">3. Payment Security & Data Sharing</h2>
             <p>
-              We do not sell your personal information. However, we share necessary data with trusted partners to fulfill your orders:
+              We prioritize the security of your financial data. We do not store your credit card or bank details on our servers. 
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Razorpay:</strong> To process secure payments (we do not store your card or bank details).</li>
-              <li><strong>DTDC Courier:</strong> To deliver your products to your doorstep.</li>
-              <li><strong>Supabase:</strong> For secure database management and authentication.</li>
+              <li><strong>Payment Processing:</strong> All payments are processed securely through **Razorpay**, an industry-leading payment gateway.</li>
+              <li><strong>Logistics Partners:</strong> We share your name, address, and phone number with **DTDC**, **Rapido**, or **Uber** for the sole purpose of delivering your order.</li>
+              <li><strong>Legal Compliance:</strong> We may disclose information if required by law to protect our rights or comply with legal proceedings.</li>
             </ul>
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">4. Data Security</h2>
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">4. Cookies and Tracking</h2>
             <p>
-              We implement industry-standard security measures to protect your data. All payment transactions are encrypted using SSL technology through our payment gateway provider, Razorpay.
+              Our website uses cookies to maintain your shopping cart state and provide a seamless login experience. You can choose to disable cookies through your browser settings, though some features of the site (like the "Cart") may not function correctly.
             </p>
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">5. Contact Us</h2>
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">5. Data Retention</h2>
             <p>
-              If you have any questions regarding this Privacy Policy, you may contact us at:
+              We retain your order information for our internal records as required for tax and accounting purposes. You may request the deletion of your account at any time by contacting our support team.
+            </p>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">6. Contact Information</h2>
+            <p>
+              For any privacy-related concerns or data requests, please contact us:
             </p>
             <p className="font-bold text-zinc-900 uppercase tracking-wider text-sm">
+              SKML Fabric Store<br />
               Email: inmypartystore@gmail.com<br />
-              Phone: +91 9398324095
+              WhatsApp/Phone: +91 9398324095<br />
+              Address: Visakhapatnam, Andhra Pradesh, India.
             </p>
           </section>
         </div>

@@ -10,58 +10,65 @@ const TermsConditions = () => {
         </div>
 
         <div className="prose prose-zinc max-w-none space-y-12 text-zinc-600 leading-relaxed font-light">
-          <p className="italic">
-            Welcome to SKML Fabric Store. By accessing our website and purchasing our premium backdrops and boutique fabrics, you agree to comply with and be bound by the following terms and conditions.
-          </p>
-
           <section className="space-y-4">
-            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">1. Products & Pricing</h2>
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">1. Introduction</h2>
             <p>
-              We strive to display our boutique fabrics and backdrop colors as accurately as possible. However, actual colors may vary slightly depending on your screen settings. 
-            </p>
-            <p>
-              All prices are listed in Indian Rupees (INR) and are subject to change without prior notice. The price at the time of your order is final.
+              By accessing and placing an order with **SKML Fabric Store**, you confirm that you are in agreement with and bound by the terms of service contained in the Terms & Conditions outlined below. These terms apply to the entire website and any email or other type of communication between you and SKML Fabric Store.
             </p>
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">2. Order Acceptance</h2>
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">2. Products & Accuracy</h2>
             <p>
-              We reserve the right to refuse or cancel any order for reasons including product unavailability, errors in pricing or product information, or suspicion of fraudulent activity.
+              We specialize in premium boutique fabrics and event backdrops. We aim for 100% accuracy in our product descriptions and photography. However:
+            </p>
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Fabric colors may vary slightly due to digital screen settings and lighting.</li>
+              <li>Dimensions for custom-cut fabrics are subject to a minor tolerance of +/- 1-2 cm.</li>
+              <li>Product availability is subject to change without notice. If an item becomes unavailable after an order is placed, we will notify you for a replacement or refund.</li>
+            </ul>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">3. Order & Payment</h2>
+            <p>
+              All orders are processed in Indian Rupees (INR). Payments must be made in full through our integrated payment partner, **Razorpay**, before an order is dispatched. 
+            </p>
+            <p>
+              We reserve the right to cancel orders that appear to be fraudulent or provide incomplete shipping/contact information.
             </p>
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">3. Custom Orders & Dimensions</h2>
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">4. Shipping Policy</h2>
             <p>
-              For products sold with custom dimensions (per meter or custom height/width), customers are responsible for providing accurate measurements. Once a fabric is cut to your specific dimensions, the order cannot be cancelled or modified.
+              We prioritize fast delivery to ensure your celebrations are never delayed:
+            </p>
+            <ul className="list-disc pl-6 space-y-2">
+              <li><strong>Local Delivery (Visakhapatnam):</strong> Orders are dispatched via **Rapido or Uber** for same-day delivery (typically 2-6 hours).</li>
+              <li><strong>National Shipping:</strong> Orders are shipped via **DTDC** and usually arrive within 3-7 business days depending on the location.</li>
+              <li>Shipping charges are calculated based on weight and distance at the time of checkout.</li>
+            </ul>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">5. User Conduct</h2>
+            <p>
+              Users are prohibited from using the website for any unlawful purpose, misrepresenting their identity, or attempting to compromise the security of the platform. All content on this site, including images of our boutique fabrics, is the intellectual property of SKML Fabric Store.
             </p>
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">4. Shipping & Delivery</h2>
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">6. Modifications</h2>
             <p>
-              Delivery times are estimates and not guarantees. We ship via **DTDC Courier** for pan-India orders. 
-            </p>
-            <p>
-              For customers located in **Visakhapatnam (Local)**, we offer ultra-fast delivery via **Rapido or Uber** courier services. These orders are typically delivered within 2-6 hours of processing.
-            </p>
-            <p>
-              While we aim to process all orders within 24-48 hours, we are not responsible for delays caused by shipping partners or unforeseen circumstances.
+              SKML Fabric Store reserves the right to modify these terms at any time. Your continued use of the site after any changes constitutes your acceptance of the new Terms & Conditions.
             </p>
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">5. Limitation of Liability</h2>
+            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">7. Governing Law</h2>
             <p>
-              SKML Fabric Store shall not be liable for any direct, indirect, or incidental damages resulting from the use or inability to use our products or website.
-            </p>
-          </section>
-
-          <section className="space-y-4">
-            <h2 className="text-xl font-black text-zinc-900 uppercase tracking-widest">6. Governing Law</h2>
-            <p>
-              These terms are governed by the laws of India. Any disputes arising from the use of this website shall be subject to the exclusive jurisdiction of the courts in Andhra Pradesh, India.
+              These terms shall be governed by and construed in accordance with the laws of India. Any disputes will be handled exclusively by the courts in **Visakhapatnam, Andhra Pradesh**.
             </p>
           </section>
         </div>
