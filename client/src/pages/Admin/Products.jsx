@@ -29,6 +29,9 @@ const Products = () => {
     category: '',
     sub_category: '',
     price: '',
+    discount_pct: 0,
+    shipping_cost: 0,
+    sku: '',
     description: '',
     image: '',
     images: [],
@@ -40,6 +43,7 @@ const Products = () => {
     min_order: 1,
     lead_time: '',
     stock_status: 'In Stock',
+    is_featured: false,
     rating: 4.5,
     reviews_count: 0
   });
@@ -129,6 +133,7 @@ const Products = () => {
       
       if (error) throw error;
       
+      alert('Product saved successfully!');
       setIsModalOpen(false);
       setEditingProduct(null);
       resetForm();
@@ -147,6 +152,7 @@ const Products = () => {
     try {
       const { error } = await supabase.from('products').delete().eq('id', id);
       if (error) throw error;
+      alert('Product deleted successfully!');
       fetchData();
     } catch (error) {
       console.error('Delete error:', error);
@@ -160,6 +166,9 @@ const Products = () => {
       category: '',
       sub_category: '',
       price: '',
+      discount_pct: 0,
+      shipping_cost: 0,
+      sku: '',
       description: '',
       image: '',
       images: [],
@@ -171,7 +180,7 @@ const Products = () => {
       min_order: 1,
       lead_time: '',
       stock_status: 'In Stock',
-      discount_pct: 0,
+      is_featured: false,
       rating: 4.5,
       reviews_count: 0
     });
@@ -179,7 +188,8 @@ const Products = () => {
 
   const filteredProducts = products.filter(p => 
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.category?.toLowerCase().includes(searchTerm.toLowerCase())
+    p.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.sku?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -304,8 +314,9 @@ const Products = () => {
       </div>
 
       {/* Desktop Product Table (Hidden on small screens) */}
-      <div className="hidden md:block bg-white border border-zinc-200 rounded-sm overflow-x-auto shadow-sm scrollbar-hide">
-        <table className="w-full text-left min-w-[1000px]">
+      <div className="hidden md:block bg-white border border-zinc-200 rounded-sm overflow-hidden shadow-sm">
+        <div className="overflow-x-auto scrollbar-hide">
+          <table className="w-full text-left min-w-[1000px]">
           <thead className="bg-zinc-50 border-b border-zinc-200">
             <tr>
               <th className="px-6 py-5 text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500">Overview</th>
@@ -380,7 +391,18 @@ const Products = () => {
                     </div>
                   </td>
                   <td className="px-6 py-6 text-right">
-                    <span className="text-sm font-black text-zinc-900 uppercase">₹{p.price}</span>
+                    <div className="flex flex-col items-end">
+                       <span className="text-sm font-black text-zinc-900 uppercase tracking-tight">₹{p.price}</span>
+                       {p.discount_pct > 0 && (
+                         <span className="text-[8px] font-black text-green-600 uppercase tracking-widest mt-0.5">-{p.discount_pct}% Off</span>
+                       )}
+                       {p.shipping_cost > 0 && (
+                         <span className="text-[8px] font-black text-blue-500 uppercase tracking-widest mt-0.5">Ship: ₹{p.shipping_cost}</span>
+                       )}
+                       {p.is_featured && (
+                         <span className="text-[8px] font-black text-secondary uppercase tracking-widest mt-1 px-1.5 py-0.5 bg-secondary/10 rounded-full italic">Featured</span>
+                       )}
+                    </div>
                   </td>
                   <td className="px-6 py-6 text-right">
                     <div className="flex items-center justify-end gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all">
@@ -414,6 +436,7 @@ const Products = () => {
           </tbody>
         </table>
       </div>
+    </div>
 
       {/* Modal / Side Panel */}
       {isModalOpen && (
@@ -496,6 +519,8 @@ const Products = () => {
                             onChange={(e) => setFormData({ ...formData, sub_category: e.target.value })}
                           />
                         </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
                           <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 block mb-2">Base Price (INR)</label>
                           <input 
@@ -505,6 +530,26 @@ const Products = () => {
                             className="w-full p-4 bg-zinc-50 border border-zinc-100 focus:border-zinc-900 outline-none font-bold text-xs"
                             value={formData.price}
                             onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 block mb-2">Discount (%)</label>
+                          <input 
+                            type="number" 
+                            placeholder="10"
+                            className="w-full p-4 bg-zinc-50 border border-zinc-100 focus:border-zinc-900 outline-none font-bold text-xs"
+                            value={formData.discount_pct}
+                            onChange={(e) => setFormData({ ...formData, discount_pct: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 block mb-2">Shipping Charge (INR)</label>
+                          <input 
+                            type="number" 
+                            placeholder="0 for Free"
+                            className="w-full p-4 bg-zinc-50 border border-zinc-100 focus:border-zinc-900 outline-none font-bold text-xs"
+                            value={formData.shipping_cost}
+                            onChange={(e) => setFormData({ ...formData, shipping_cost: e.target.value })}
                           />
                         </div>
                       </div>
@@ -837,7 +882,17 @@ const Products = () => {
                              ))}
                           </div>
                        </div>
-                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                          <div>
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 block mb-2">Product SKU</label>
+                            <input 
+                              type="text" 
+                              placeholder="e.g. SKML-001"
+                              className="w-full p-4 bg-zinc-50 border border-zinc-100 focus:border-zinc-900 outline-none uppercase font-bold text-xs tracking-widest transition-all"
+                              value={formData.sku}
+                              onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                            />
+                          </div>
                           <div>
                             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 block mb-2">Lead Time (Ships In)</label>
                             <input 
@@ -862,6 +917,27 @@ const Products = () => {
                               <option value="Out of Stock">Out of Stock</option>
                             </select>
                           </div>
+                       </div>
+
+                       <div className="p-6 bg-zinc-50 border border-zinc-100 rounded-sm flex items-center justify-between">
+                          <div>
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-900 block">Featured Selection</label>
+                            <p className="text-[8px] text-zinc-400 uppercase tracking-tighter mt-1">Show this product in the homepage featured collection</p>
+                          </div>
+                          <button 
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, is_featured: !prev.is_featured }))}
+                            className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 border ${
+                              formData.is_featured 
+                                ? 'bg-zinc-900 text-white border-zinc-900 shadow-xl scale-105' 
+                                : 'bg-white text-zinc-400 border-zinc-200 hover:border-zinc-400'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className={`w-2 h-2 rounded-full ${formData.is_featured ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-200'}`} />
+                              {formData.is_featured ? 'Featured Item' : 'Standard Product'}
+                            </div>
+                          </button>
                        </div>
                     </div>
                   </div>

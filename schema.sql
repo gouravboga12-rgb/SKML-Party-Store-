@@ -28,6 +28,10 @@ CREATE TABLE products (
     sizes JSONB DEFAULT '[]'::jsonb,
     dimensions JSONB DEFAULT '[]'::jsonb,
     reviews JSONB DEFAULT '[]'::jsonb,
+    discount_pct INTEGER DEFAULT 0,
+    shipping_cost DECIMAL(10, 2) DEFAULT 0,
+    sku TEXT,
+    is_featured BOOLEAN DEFAULT FALSE,
     specifications JSONB DEFAULT '{}'::jsonb,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

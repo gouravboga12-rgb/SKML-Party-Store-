@@ -26,7 +26,7 @@ app.post('/api/order/create', async (req, res) => {
 
   try {
     const options = {
-      amount: amount * 100, // Amount in paise
+      amount: Math.round(amount * 100), // Amount in paise
       currency,
       receipt: receipt || `receipt_${Date.now()}`
     };

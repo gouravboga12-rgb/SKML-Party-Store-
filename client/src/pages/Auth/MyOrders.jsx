@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
-import { Package, Truck, CheckCircle2, Clock, ChevronRight, ShoppingBag, ExternalLink } from 'lucide-react';
+import { Package, Truck, CheckCircle2, Clock, ChevronRight, ShoppingBag, ExternalLink, Star, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const MyOrders = () => {
   const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reviewModal, setReviewModal] = useState({ isOpen: false, product: null });
+  const [reviewData, setReviewData] = useState({ rating: 5, comment: '' });
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -33,6 +36,36 @@ const MyOrders = () => {
       console.error('Error fetching orders:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!reviewData.comment.trim()) return;
+
+    try {
+      setSubmittingReview(true);
+      const { error } = await supabase
+        .from('reviews')
+        .insert({
+          product_id: reviewModal.product.id,
+          user_id: user.id,
+          user_name: user.user_metadata?.full_name || 'Verified Buyer',
+          rating: reviewData.rating,
+          comment: reviewData.comment,
+          status: 'approved'
+        });
+
+      if (error) throw error;
+      
+      alert('Thank you! Your review has been posted.');
+      setReviewModal({ isOpen: false, product: null });
+      setReviewData({ rating: 5, comment: '' });
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      alert('Failed to post review. Please try again.');
+    } finally {
+      setSubmittingReview(false);
     }
   };
 
@@ -101,12 +134,18 @@ const MyOrders = () => {
                 {/* Items Preview */}
                 <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-4">
+                    {order.status === 'delivered' && (
+                      <div className="bg-secondary/5 p-4 border-l-4 border-secondary rounded-sm mb-6 animate-in fade-in slide-in-from-left duration-700">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-secondary">HOW WAS YOUR EXPERIENCE?</p>
+                        <p className="text-[8px] text-zinc-500 uppercase tracking-widest mt-1 font-black">Please share your thoughts on the boutique collection you've received. Your feedback helps us improve!</p>
+                      </div>
+                    )}
                     <h4 className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">Items In Bag</h4>
                     <div className="space-y-3">
                       {order.order_items?.map((item) => (
-                        <Link 
-                          key={item.id} 
-                          to={`/product/${item.product_id}`}
+                        <div key={item.id} className="space-y-1 group/container">
+                          <Link 
+                            to={`/product/${item.product_id}`}
                           className="flex items-center gap-4 group/item hover:bg-zinc-50 p-2 rounded-sm transition-all"
                         >
                           <div className="w-12 h-12 bg-zinc-100 rounded-sm overflow-hidden flex-shrink-0 border border-zinc-100 group-hover/item:border-zinc-900 transition-colors">
@@ -128,6 +167,15 @@ const MyOrders = () => {
                           </div>
                           <ChevronRight size={12} className="text-zinc-200 group-hover/item:text-zinc-900 transition-all opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1" />
                         </Link>
+                        {order.status === 'delivered' && (
+                          <button 
+                            onClick={() => setReviewModal({ isOpen: true, product: { id: item.product_id, name: item.product_name } })}
+                            className="ml-16 mt-2 text-[8px] font-black uppercase tracking-[0.2em] text-secondary border-b border-secondary/20 hover:border-secondary transition-all"
+                          >
+                            Rate & Review Product
+                          </button>
+                        )}
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -181,6 +229,58 @@ const MyOrders = () => {
           </div>
         )}
       </div>
+
+      {/* Review Modal */}
+      {reviewModal.isOpen && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setReviewModal({ isOpen: false, product: null })} />
+          <div className="relative bg-white w-full max-w-md rounded-sm shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="p-8 border-b border-zinc-100 flex items-center justify-between">
+              <div className="space-y-1">
+                <h3 className="text-xl font-black uppercase tracking-tighter italic">Rate Experience</h3>
+                <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest truncate max-w-[200px]">{reviewModal.product?.name}</p>
+              </div>
+              <button onClick={() => setReviewModal({ isOpen: false, product: null })} className="text-zinc-400 hover:text-zinc-900">
+                <X size={24} />
+              </button>
+            </div>
+            <form onSubmit={handleReviewSubmit} className="p-8 space-y-8">
+              <div className="flex flex-col items-center gap-4">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-900">Your Rating</p>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReviewData({ ...reviewData, rating: star })}
+                      className={`transition-all duration-300 ${reviewData.rating >= star ? 'text-secondary scale-110' : 'text-zinc-200'}`}
+                    >
+                      <Star size={32} fill={reviewData.rating >= star ? 'currentColor' : 'none'} strokeWidth={1.5} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 block">Your Review</label>
+                <textarea
+                  required
+                  placeholder="Tell us about the fabric quality, finish, or your experience..."
+                  value={reviewData.comment}
+                  onChange={(e) => setReviewData({ ...reviewData, comment: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-100 p-4 text-xs font-medium focus:border-zinc-900 outline-none h-32 resize-none leading-relaxed transition-all"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={submittingReview}
+                className="w-full py-5 bg-zinc-900 text-white text-[10px] font-black uppercase tracking-[0.3em] hover:bg-secondary transition-all disabled:opacity-50 shadow-xl"
+              >
+                {submittingReview ? 'Submitting...' : 'Post My Review'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

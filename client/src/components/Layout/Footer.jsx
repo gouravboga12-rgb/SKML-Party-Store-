@@ -74,7 +74,7 @@ const Footer = () => {
             © 2026 SKML Fabric Store. All Rights Reserved.
           </p>
           <p className="text-zinc-400 text-[10px] uppercase tracking-widest">
-            Developed by <a href="https://www.codtechitsolutions.com/" target="_blank" rel="noopener noreferrer" className="text-zinc-900 font-bold hover:text-secondary transition-colors underline decoration-zinc-200">CODTECH IT SOLUTION</a>
+            Developed by <a href="https://codtechitsolutions.com/" target="_blank" rel="noopener noreferrer" className="text-zinc-900 font-bold hover:text-secondary transition-colors underline decoration-zinc-200">CODTECH IT SOLUTION</a>
           </p>
         </div>
       </div>

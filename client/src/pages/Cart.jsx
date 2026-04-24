@@ -53,7 +53,7 @@ const Cart = () => {
             {cart.map((item) => (
               <div key={item.cartItemId} className="flex flex-col sm:flex-row gap-6 pb-8 border-b border-zinc-100 group">
                 {/* Image */}
-                <div className="w-full sm:w-32 aspect-square bg-zinc-50 rounded-sm overflow-hidden">
+                <Link to={`/product/${item.id}`} className="w-full sm:w-32 aspect-square bg-zinc-50 rounded-sm overflow-hidden block">
                   <img 
                     src={item.image} 
                     alt={item.name} 
@@ -62,7 +62,7 @@ const Cart = () => {
                       e.target.src = 'https://images.unsplash.com/photo-1517142089942-ba376ce32a2e?q=80&w=1000&auto=format&fit=crop';
                     }}
                   />
-                </div>
+                </Link>
 
                 {/* Info */}
                 <div className="flex-grow space-y-2">
@@ -71,7 +71,9 @@ const Cart = () => {
                       <span className="text-secondary text-[10px] uppercase tracking-widest font-bold mb-1 block">
                         {item.category.replace('-', ' ')}
                       </span>
-                      <h3 className="text-zinc-900 text-lg font-bold uppercase tracking-tight">{item.name}</h3>
+                      <Link to={`/product/${item.id}`}>
+                        <h3 className="text-zinc-900 text-lg font-bold uppercase tracking-tight hover:text-secondary transition-colors">{item.name}</h3>
+                      </Link>
                       {(item.selectedHeight && item.selectedWidth) ? (
                         <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">
                           Dimensions: {item.selectedHeight}ft x {item.selectedWidth}ft

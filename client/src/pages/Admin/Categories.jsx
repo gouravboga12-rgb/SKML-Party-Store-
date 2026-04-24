@@ -75,6 +75,7 @@ const Categories = () => {
       
       if (error) throw error;
       
+      alert('Category saved successfully!');
       setIsModalOpen(false);
       setEditingCategory(null);
       setFormData({ id: '', name: '', description: '', image: '' });
@@ -91,7 +92,7 @@ const Categories = () => {
     if (!window.confirm('Are you sure you want to delete this category?')) return;
     try {
       const { error } = await supabase.from('categories').delete().eq('id', id);
-      if (error) throw error;
+      alert('Category deleted successfully!');
       fetchCategories();
     } catch (error) {
       console.error('Delete error:', error);

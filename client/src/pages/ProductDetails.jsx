@@ -183,6 +183,7 @@ const ProductDetails = () => {
 
       setProduct(data);
       setActiveImage(data.image);
+      setQuantity(data.min_order || 1);
       
       if (data.colors?.length > 0) {
         setSelectedColor(data.colors[0]);
@@ -232,22 +233,13 @@ const ProductDetails = () => {
     }
   }, [activeImage, product, selectedColor]);
 
-  const getCurrentPrice = () => {
+  const getUnitPrice = () => {
     if (!product) return 0;
-    let basePrice = product.price;
-
-    // Check if the product is sold by meters
-    if (product.price_type === 'meter') {
-      return basePrice * quantity;
-    }
-
-    return basePrice;
+    return product.price;
   };
 
-  const getSalePrice = () => {
-    const total = getCurrentPrice();
-    const discount = product?.discount_pct || 0;
-    return total * (1 - (discount / 100));
+  const getDiscountedUnitPrice = () => {
+    return getUnitPrice() * (1 - ((product?.discount_pct || 0) / 100));
   };
 
   const handleAddToCart = () => {
@@ -394,13 +386,13 @@ const ProductDetails = () => {
             <div className="space-y-4">
               <div className="flex items-baseline gap-4">
                 <p className="text-3xl font-bold text-zinc-900 tracking-tight">
-                  ₹{getSalePrice().toLocaleString()}
+                  ₹{getDiscountedUnitPrice().toLocaleString()}
                   <span className="text-sm text-zinc-400 font-normal ml-1">/{product.price_unit || (product.price_type === 'meter' ? 'meter' : 'pc')}</span>
                 </p>
                 <div className="flex items-baseline gap-2">
                   {product?.discount_pct > 0 && (
                     <>
-                      <span className="text-zinc-400 line-through text-xs">₹{getCurrentPrice().toLocaleString()}</span>
+                      <span className="text-zinc-400 line-through text-xs">₹{getUnitPrice().toLocaleString()}</span>
                       <span className="text-green-600 text-[10px] font-black uppercase tracking-widest bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
                         {product.discount_pct}% OFF
                       </span>
@@ -409,12 +401,6 @@ const ProductDetails = () => {
                 </div>
               </div>
 
-              {product.price_type !== 'fixed' && (
-                <div className="py-3 px-4 bg-zinc-900 rounded-sm inline-block shadow-lg">
-                   <p className="text-[10px] font-black text-white/60 uppercase tracking-[0.2em] mb-1">Estimated Total</p>
-                   <p className="text-xl font-bold text-white tracking-tight">₹{getSalePrice().toLocaleString()}</p>
-                </div>
-              )}
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -547,6 +533,16 @@ const ProductDetails = () => {
             {/* Actions */}
             <div className="space-y-4 pt-4">
 
+              <div className="py-4 px-6 bg-zinc-50 border border-zinc-100 rounded-sm flex justify-between items-center animate-in fade-in slide-in-from-bottom-2 duration-500">
+                <div className="space-y-0.5">
+                  <p className="text-[8px] font-black text-zinc-400 uppercase tracking-widest">Calculated Total</p>
+                  <p className="text-lg font-black text-zinc-900 tracking-tight">₹{(getDiscountedUnitPrice() * quantity).toLocaleString()}</p>
+                </div>
+                <div className="px-3 py-1 bg-zinc-900 rounded-full">
+                  <p className="text-[8px] font-black text-white uppercase tracking-widest">{quantity} {product.price_type === 'meter' ? 'Meters' : 'Items'}</p>
+                </div>
+              </div>
+
               <div className="flex flex-col sm:flex-row items-center gap-4">
                 <div className="space-y-2 w-full sm:w-auto">
                   <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-1">
@@ -554,7 +550,7 @@ const ProductDetails = () => {
                   </label>
                   <div className="flex items-center border border-zinc-200">
                     <button 
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      onClick={() => setQuantity(Math.max(product.min_order || 1, quantity - 1))}
                       className="px-6 py-4 text-zinc-900 hover:bg-zinc-50 transition-colors"
                     >-</button>
                     <input 
@@ -574,7 +570,7 @@ const ProductDetails = () => {
                   onClick={() => {
                     const productToCart = {
                       ...product,
-                      price: getSalePrice() / quantity,
+                      price: getDiscountedUnitPrice(),
                       selectedColor: selectedColor?.name,
                       selectedSize: selectedSize === 'Custom' ? `Custom: ${customSize}` : selectedSize,
                       selectedDimension: selectedDimension === 'Custom' ? `Custom: ${customDimension}` : selectedDimension
@@ -602,7 +598,7 @@ const ProductDetails = () => {
                   state: { 
                     directPurchase: { 
                       ...product, 
-                      price: getCurrentPrice() / quantity,
+                      price: getDiscountedUnitPrice(),
                       selectedColor: selectedColor?.name,
                       selectedSize: selectedSize === 'Custom' ? `Custom: ${customSize}` : selectedSize,
                       selectedDimension: selectedDimension === 'Custom' ? `Custom: ${customDimension}` : selectedDimension

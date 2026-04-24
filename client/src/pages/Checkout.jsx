@@ -13,6 +13,7 @@ const Checkout = () => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [orderStatus, setOrderStatus] = useState('idle'); // idle, processing, success, error
+  const [confirmedOrderId, setConfirmedOrderId] = useState(null);
 
   // Check if this is a direct purchase (Buy Now)
   const directPurchase = location.state?.directPurchase;
@@ -23,9 +24,9 @@ const Checkout = () => {
     ? [{ ...directPurchase, quantity: directQuantity }] 
     : cartItems;
 
-  const totalAmount = directPurchase 
-    ? directPurchase.price * directQuantity 
-    : cartTotalAmount;
+  const totalAmount = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const shippingTotal = items.reduce((acc, item) => acc + (Number(item.shipping_cost) || 0), 0);
+  const grandTotal = totalAmount + shippingTotal;
 
   // If not logged in, they shouldn't even be here
   if (!user) {
@@ -38,12 +39,26 @@ const Checkout = () => {
     phone: '',
     address: '',
     city: '',
-    pincode: '',
-    notes: ''
+    pincode: ''
   });
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    
+    // Strict Input Filtering
+    if (name === 'phone') {
+      const cleaned = value.replace(/[^0-9+]/g, ''); // Only numbers and +
+      if (cleaned.length <= 13) setFormData({ ...formData, [name]: cleaned });
+      return;
+    }
+
+    if (name === 'pincode') {
+      const cleaned = value.replace(/[^0-9]/g, ''); // Only numbers
+      if (cleaned.length <= 6) setFormData({ ...formData, [name]: cleaned });
+      return;
+    }
+
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleRazorpayPayment = async (e) => {
@@ -51,12 +66,25 @@ const Checkout = () => {
     setLoading(true);
     setOrderStatus('processing');
 
-    // Validate form
-    if (!formData.fullName || !formData.phone || !formData.address) {
-      alert("Please fill in all required fields.");
-      setLoading(false);
-      setOrderStatus('idle');
-      return;
+    // Enhanced Form Validation
+    const phoneRegex = /^(\+\d{12}|\d{10})$/;
+    const pincodeRegex = /^\d{6}$/;
+
+    if (!formData.fullName || formData.fullName.length < 3) {
+      alert("Please enter a valid Full Name (minimum 3 characters).");
+      setLoading(false); setOrderStatus('idle'); return;
+    }
+    if (!phoneRegex.test(formData.phone)) {
+      alert("Please enter a valid 10-digit phone number or include country code (e.g., +919876543210)");
+      setLoading(false); setOrderStatus('idle'); return;
+    }
+    if (!pincodeRegex.test(formData.pincode)) {
+      alert("Please enter a valid 6-digit Pincode.");
+      setLoading(false); setOrderStatus('idle'); return;
+    }
+    if (!formData.address || formData.address.length < 10) {
+      alert("Please enter a complete address (minimum 10 characters).");
+      setLoading(false); setOrderStatus('idle'); return;
     }
 
     try {
@@ -64,7 +92,11 @@ const Checkout = () => {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/order/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: totalAmount, receipt: `order_${Date.now()}` })
+        body: JSON.stringify({ 
+          amount: grandTotal, 
+          currency: 'INR', 
+          receipt: `order_${Date.now()}` 
+        })
       });
       
       if (!response.ok) throw new Error('Order creation failed');
@@ -134,7 +166,6 @@ const Checkout = () => {
           total_amount: totalAmount,
           payment_id: paymentId,
           payment_status: 'completed',
-          order_notes: formData.notes,
           status: 'pending'
         })
         .select()
@@ -163,6 +194,7 @@ const Checkout = () => {
 
       if (itemsError) throw itemsError;
 
+      setConfirmedOrderId(orderData.id);
       setOrderStatus('success');
       clearCart();
     } catch (err) {
@@ -196,7 +228,7 @@ const Checkout = () => {
             Back to Home
           </Link>
           <a 
-            href={`https://wa.me/919398324095?text=Hello, I just placed an order! Name: ${formData.fullName}`}
+            href={`https://wa.me/919398324095?text=Hello, I just placed an order! Name: ${formData.fullName}%0AOrder ID: ${confirmedOrderId?.slice(0, 8).toUpperCase()}`}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full py-4 border border-zinc-200 text-zinc-900 font-bold uppercase tracking-widest text-[10px] text-center hover:bg-zinc-900 hover:text-white transition-all"
@@ -246,16 +278,18 @@ const Checkout = () => {
                   <label className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">Phone Number *</label>
                   <input 
                     name="phone" required value={formData.phone} onChange={handleInputChange}
+                    maxLength="13"
                     className="w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-xs p-4 focus:border-zinc-900 focus:outline-none transition-all tracking-widest"
-                    placeholder="Enter 10-digit number"
+                    placeholder="+919876543210 or 10-digit number"
                   />
                 </div>
                 <div className="space-y-2">
                    <label className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">Pincode *</label>
                    <input 
                      name="pincode" required value={formData.pincode} onChange={handleInputChange}
+                     maxLength="6"
                      className="w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-xs p-4 focus:border-zinc-900 focus:outline-none transition-all tracking-widest"
-                     placeholder="Enter local pincode"
+                     placeholder="6-digit Pincode"
                    />
                 </div>
                 <div className="md:col-span-2 space-y-2">
@@ -267,14 +301,7 @@ const Checkout = () => {
                     placeholder="Building, Street, Area details"
                   ></textarea>
                 </div>
-                <div className="md:col-span-2 space-y-2">
-                  <label className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">Order Notes</label>
-                  <input 
-                    name="notes" value={formData.notes} onChange={handleInputChange}
-                    className="w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-xs p-4 focus:border-zinc-900 focus:outline-none transition-all uppercase tracking-widest"
-                    placeholder="Custom requirements or special instructions"
-                  />
-                </div>
+
               </div>
             </div>
 
@@ -340,11 +367,13 @@ const Checkout = () => {
                 </div>
                 <div className="flex justify-between text-zinc-500 text-[10px] uppercase tracking-widest font-bold">
                   <span>Delivery</span>
-                  <span className="text-green-600 uppercase">Free</span>
+                  <span className={shippingTotal > 0 ? "text-zinc-900" : "text-green-600 uppercase"}>
+                    {shippingTotal > 0 ? `₹${shippingTotal.toLocaleString()}` : 'Free'}
+                  </span>
                 </div>
                 <div className="pt-4 flex justify-between">
                   <span className="text-zinc-900 font-black uppercase tracking-[0.2em] text-sm">Total</span>
-                  <span className="text-2xl font-black text-zinc-900 tracking-tight">₹{totalAmount.toLocaleString()}</span>
+                  <span className="text-2xl font-black text-zinc-900 tracking-tight">₹{grandTotal.toLocaleString()}</span>
                 </div>
               </div>
 
