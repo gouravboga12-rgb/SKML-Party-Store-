@@ -48,8 +48,9 @@ const RefundPolicy = () => {
               Once your unboxing video is shared and the damage is verified by our team:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>The refund will be initiated directly to your original payment method (via Razorpay).</li>
-              <li>The refunded amount will reflect in your bank account within **5-7 working days**.</li>
+              <li>The refund will be initiated directly to your original account after a **WhatsApp inquiry** is made and verified by the owner.</li>
+              <li>Please contact us on WhatsApp with your Order ID and the unboxing video proof to proceed.</li>
+              <li>The refunded amount will reflect in your bank account within **5-7 working days** after manual initiation.</li>
             </ul>
           </section>
 
