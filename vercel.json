@@ -1,20 +1,13 @@
 {
   "version": 2,
-  "installCommand": "npm install --prefix client && npm install --prefix server",
+  "installCommand": "npm install && npm install --prefix client",
   "buildCommand": "npm run build --prefix client",
   "outputDirectory": "client/dist",
   "framework": "vite",
-  "functions": {
-    "server/index.js": {
-      "runtime": "nodejs20.x",
-      "memory": 1024,
-      "maxDuration": 10
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/server/index.js"
+      "destination": "/api/index.js"
     },
     {
       "source": "/(.*)",
