@@ -4,6 +4,13 @@
   "buildCommand": "npm run build --prefix client",
   "outputDirectory": "client/dist",
   "framework": "vite",
+  "functions": {
+    "server/index.js": {
+      "runtime": "@vercel/node",
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
