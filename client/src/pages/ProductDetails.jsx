@@ -39,6 +39,7 @@ const ProductDetails = () => {
   const [selectedDimension, setSelectedDimension] = useState('');
   const [customDimension, setCustomDimension] = useState('');
   const [showZoom, setShowZoom] = useState(false);
+  const [showAllImages, setShowAllImages] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState([]);
 
   // Review States
@@ -183,12 +184,12 @@ const ProductDetails = () => {
       }
 
       setProduct(data);
-      setActiveImage(data.image);
+      setActiveImage(data.image || (data.images && data.images[0]) || '');
       setQuantity(data.min_order || 1);
       
       if (data.colors?.length > 0) {
         setSelectedColor(data.colors[0]);
-        if (data.colors[0].image) setActiveImage(data.colors[0].image);
+        if (data.colors[0].image) setActiveImage(data.colors[0].image || data.image || (data.images && data.images[0]) || '');
       }
       
       if (data.sizes?.length > 0) {
@@ -298,6 +299,29 @@ const ProductDetails = () => {
         image={product.image}
         url={`product/${product.id}`}
       />
+
+      {/* Floating Call Popup */}
+      <div className="fixed top-24 right-4 md:top-32 md:right-8 z-40 animate-in fade-in slide-in-from-right-8 duration-700 delay-500">
+        <div className="relative group">
+          <a href="tel:+919398324095" className="flex items-center gap-3 bg-white/90 backdrop-blur-md border border-zinc-200 p-2 pr-5 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgba(180,150,110,0.3)] hover:border-secondary/30 transition-all duration-300 hover:-translate-y-1">
+            <div className="w-10 h-10 bg-zinc-900 group-hover:bg-secondary transition-colors rounded-full flex items-center justify-center shadow-inner">
+               <Phone size={16} className="text-white animate-pulse" />
+            </div>
+            <div className="text-left hidden sm:block">
+              <p className="text-[8px] font-black uppercase tracking-[0.2em] text-zinc-500 mb-0.5">Need Help?</p>
+              <p className="text-xs font-black text-zinc-900 leading-none tracking-tight">+91 9398324095</p>
+            </div>
+          </a>
+          
+          {/* Popup message on hover */}
+          <div className="absolute top-full right-0 mt-3 w-48 bg-zinc-900 text-white text-center p-3 rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 shadow-xl pointer-events-none transform translate-y-2 group-hover:translate-y-0">
+            <div className="absolute -top-1.5 right-6 w-3 h-3 bg-zinc-900 transform rotate-45"></div>
+            <p className="text-[9px] uppercase tracking-widest font-bold text-zinc-300 mb-1">Call Store Directly</p>
+            <p className="text-[10px] text-zinc-400 font-medium">We're here to assist you with custom sizes & bulk discounts!</p>
+          </div>
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 md:px-8">
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 mb-8 text-zinc-400 text-[10px] uppercase tracking-widest font-bold" data-aos="fade-right">
@@ -311,50 +335,81 @@ const ProductDetails = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
           {/* Left: Image Gallery */}
           <div className="lg:col-span-1 flex lg:flex-col gap-3 order-2 lg:order-1 overflow-x-auto lg:overflow-x-visible pb-4 lg:pb-0 scrollbar-hide" data-aos="fade-right" data-aos-duration="600">
-            {[...new Set([product.image, ...(Array.isArray(product.images) ? product.images : [])])].filter(Boolean).map((img, idx) => {
-              const thumbnail = getThumbnail(img);
-              const isVid = isVideo(img);
-              
-              return (
-                <button
-                  key={idx}
-                  onClick={() => setActiveImage(img)}
-                  className={`flex-shrink-0 w-20 h-24 border-2 transition-all ${
-                    activeImage === img ? 'border-zinc-900 shadow-md scale-105' : 'border-transparent opacity-60 hover:opacity-100'
-                  } rounded-sm overflow-hidden bg-transparent relative group`}
-                >
-                  {isVideo(thumbnail) ? (
-                    <video 
-                      src={thumbnail} 
-                      muted 
-                      playsInline 
-                      className="w-full h-full object-cover"
-                      onMouseOver={(e) => e.target.play()}
-                      onMouseOut={(e) => {
-                        e.target.pause();
-                        e.target.currentTime = 0;
-                      }}
-                    />
-                  ) : (
-                    <img 
-                      src={thumbnail} 
-                      alt="" 
-                      className="w-full h-full object-cover transition-opacity duration-300" 
-                      onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/200x250?text=Media';
-                      }}
-                    />
-                  )}
-                  {isVid && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-colors pointer-events-none">
-                      <div className="w-9 h-9 bg-white/90 rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
-                        <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-zinc-900 border-b-[6px] border-b-transparent ml-1"></div>
-                      </div>
-                    </div>
-                  )}
-                </button>
-              );
-            })}
+            {(() => {
+              const allMedia = [...new Set([product.image, ...(Array.isArray(product.images) ? product.images : [])])].filter(Boolean);
+              const displayMedia = showAllImages ? allMedia : allMedia.slice(0, 5);
+              const hasMore = allMedia.length > 5;
+
+              return displayMedia.map((img, idx) => {
+                const thumbnail = getThumbnail(img);
+                const isVid = isVideo(img);
+                const isLast = idx === 4 && !showAllImages && hasMore;
+
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      if (isLast) {
+                        setShowAllImages(true);
+                      } else {
+                        setActiveImage(img);
+                      }
+                    }}
+                    className={`flex-shrink-0 w-20 h-24 border-2 transition-all ${
+                      (!isLast && activeImage === img) ? 'border-zinc-900 shadow-md scale-105' : 'border-transparent opacity-60 hover:opacity-100'
+                    } rounded-sm overflow-hidden bg-zinc-100 relative group flex items-center justify-center`}
+                  >
+                    {!isLast ? (
+                      <>
+                        {isVideo(thumbnail) ? (
+                          <video 
+                            src={thumbnail} 
+                            muted 
+                            playsInline 
+                            className="w-full h-full object-cover"
+                            onMouseOver={(e) => e.target.play()}
+                            onMouseOut={(e) => {
+                              e.target.pause();
+                              e.target.currentTime = 0;
+                            }}
+                          />
+                        ) : (
+                          <img 
+                            src={thumbnail} 
+                            alt="" 
+                            className="w-full h-full object-cover transition-opacity duration-300" 
+                            onError={(e) => {
+                              e.target.src = 'https://via.placeholder.com/200x250?text=Media';
+                            }}
+                          />
+                        )}
+                        {isVid && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-colors pointer-events-none">
+                            <div className="w-9 h-9 bg-white/90 rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                              <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-zinc-900 border-b-[6px] border-b-transparent ml-1"></div>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <img 
+                          src={thumbnail} 
+                          alt="" 
+                          className="w-full h-full object-cover filter blur-[2px]" 
+                          onError={(e) => {
+                            e.target.src = 'https://via.placeholder.com/200x250?text=Media';
+                          }}
+                        />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white transition-colors group-hover:bg-black/70 pointer-events-none">
+                          <span className="text-xl font-black">+{allMedia.length - 4}</span>
+                        </div>
+                      </>
+                    )}
+                  </button>
+                );
+              });
+            })()}
           </div>
 
           {/* Center: Main Image Viewer */}
@@ -390,12 +445,13 @@ const ProductDetails = () => {
           </div>
 
           {/* Right: Product Info */}
-          <div className="lg:col-span-5 order-3 space-y-8" data-aos="fade-left" data-aos-duration="600">
-            <div className="space-y-4">
-              <div className="flex items-baseline gap-4">
-                <p className="text-3xl font-bold text-zinc-900 tracking-tight">
+          <div className="lg:col-span-5 order-3 space-y-6" data-aos="fade-left" data-aos-duration="600">
+            <div className="space-y-3">
+              <h1 className="text-2xl md:text-3xl font-black text-zinc-900 tracking-tight uppercase leading-none">{product.name}</h1>
+              <div className="flex items-baseline gap-3">
+                <p className="text-2xl font-bold text-zinc-900 tracking-tight">
                   ₹{getDiscountedUnitPrice().toLocaleString()}
-                  <span className="text-sm text-zinc-400 font-normal ml-1">/{product.price_unit || (product.price_type === 'meter' ? 'meter' : 'pc')}</span>
+                  <span className="text-sm text-zinc-400 font-normal ml-1">/{product.price_type === 'meter' ? 'per meter' : (product.price_unit || 'per piece')}</span>
                 </p>
                 <div className="flex items-baseline gap-2">
                   {product?.discount_pct > 0 && (
@@ -408,7 +464,6 @@ const ProductDetails = () => {
                   )}
                 </div>
               </div>
-
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -424,7 +479,7 @@ const ProductDetails = () => {
               )}
             </div>
 
-            <p className="text-zinc-500 text-base font-light leading-relaxed">
+            <p className="text-zinc-500 text-sm font-light leading-relaxed">
               {product.description}
             </p>
 
@@ -434,12 +489,12 @@ const ProductDetails = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-zinc-900 text-[10px] uppercase tracking-widest font-bold">Select Variant / Color: <span className="text-secondary">{selectedColor?.name}</span></span>
                 </div>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-3">
                   {product.colors.map(color => (
                     <button
                       key={color.name}
                       onClick={() => handleColorSelect(color)}
-                      className={`w-14 h-16 rounded-sm border-2 transition-all flex items-center justify-center overflow-hidden bg-zinc-50 ${
+                      className={`w-12 h-14 rounded-sm border-2 transition-all flex items-center justify-center overflow-hidden bg-zinc-50 ${
                         selectedColor?.name === color.name ? 'border-zinc-900 scale-105 shadow-md' : 'border-zinc-100 hover:border-zinc-300'
                       }`}
                       title={color.name}
@@ -475,7 +530,7 @@ const ProductDetails = () => {
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`px-8 py-3 text-[10px] uppercase tracking-widest font-bold border transition-all ${
+                      className={`px-6 py-2.5 text-[10px] uppercase tracking-widest font-bold border transition-all ${
                         selectedSize === size
                         ? 'bg-zinc-900 text-white border-zinc-900'
                         : 'text-zinc-400 border-zinc-200 hover:border-zinc-900'
@@ -539,38 +594,38 @@ const ProductDetails = () => {
             )}
 
             {/* Actions */}
-            <div className="space-y-4 pt-4">
+            <div className="space-y-3 pt-2">
 
-              <div className="py-4 px-6 bg-zinc-50 border border-zinc-100 rounded-sm flex justify-between items-center animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <div className="py-3 px-5 bg-zinc-50 border border-zinc-100 rounded-sm flex justify-between items-center animate-in fade-in slide-in-from-bottom-2 duration-500">
                 <div className="space-y-0.5">
                   <p className="text-[8px] font-black text-zinc-400 uppercase tracking-widest">Calculated Total</p>
-                  <p className="text-lg font-black text-zinc-900 tracking-tight">₹{(getDiscountedUnitPrice() * quantity).toLocaleString()}</p>
+                  <p className="text-base font-black text-zinc-900 tracking-tight">₹{(getDiscountedUnitPrice() * quantity).toLocaleString()}</p>
                 </div>
                 <div className="px-3 py-1 bg-zinc-900 rounded-full">
-                  <p className="text-[8px] font-black text-white uppercase tracking-widest">{quantity} {product.price_type === 'meter' ? 'Meters' : 'Items'}</p>
+                  <p className="text-[8px] font-black text-white uppercase tracking-widest">{quantity} {product.price_type === 'meter' ? 'Meters' : (product.price_unit ? product.price_unit.replace('per ', '') + 's' : 'Items')}</p>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                <div className="space-y-2 w-full sm:w-auto">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-1">
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                <div className="space-y-1.5 w-full sm:w-auto">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-zinc-400 block ml-1">
                     {product.price_type === 'meter' ? 'Number of Meters' : 'Quantity'}
                   </label>
-                  <div className="flex items-center border border-zinc-200">
+                  <div className="flex items-center border border-zinc-200 rounded-sm">
                     <button 
                       onClick={() => setQuantity(Math.max(product.min_order || 1, quantity - 1))}
-                      className="px-6 py-4 text-zinc-900 hover:bg-zinc-50 transition-colors"
+                      className="px-4 py-3 text-zinc-900 hover:bg-zinc-50 transition-colors"
                     >-</button>
                     <input 
                       type="number" 
                       value={quantity}
                       min={product.min_order || 1}
                       onChange={(e) => setQuantity(Math.max(product.min_order || 1, parseInt(e.target.value) || 1))}
-                      className="w-16 bg-transparent text-center text-zinc-900 text-sm font-bold focus:outline-none"
+                      className="w-14 bg-transparent text-center text-zinc-900 text-xs font-bold focus:outline-none"
                     />
                     <button 
                       onClick={() => setQuantity(quantity + 1)}
-                      className="px-6 py-4 text-zinc-900 hover:bg-zinc-50 transition-colors"
+                      className="px-4 py-3 text-zinc-900 hover:bg-zinc-50 transition-colors"
                     >+</button>
                   </div>
                 </div>
@@ -586,7 +641,7 @@ const ProductDetails = () => {
                     addToCart(productToCart, quantity);
                   }}
                   disabled={product.stock_status?.toLowerCase().includes('out')}
-                  className={`flex-grow w-full py-4 font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 mt-auto ${
+                  className={`flex-grow w-full py-3 font-bold uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2 mt-auto rounded-sm ${
                     product.stock_status?.toLowerCase().includes('out') 
                       ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed' 
                       : 'bg-zinc-900 text-white hover:bg-secondary'
@@ -601,7 +656,7 @@ const ProductDetails = () => {
               )}
               
               <button 
-                className="w-full py-4 bg-zinc-100 text-zinc-900 font-bold uppercase tracking-widest text-xs hover:bg-zinc-900 hover:text-white transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 bg-zinc-100 text-zinc-900 font-bold uppercase tracking-widest text-[10px] hover:bg-zinc-900 hover:text-white transition-all flex items-center justify-center gap-2 rounded-sm"
                 onClick={() => navigate('/checkout', { 
                   state: { 
                     directPurchase: { 
@@ -622,10 +677,12 @@ const ProductDetails = () => {
                 href={`https://wa.me/919398324095?text=Hello, I want to inquire about: ${product.name} ${selectedColor ? `(Color: ${selectedColor.name})` : ''} ${selectedSize ? `(Size: ${selectedSize})` : ''} ${selectedDimension ? `(Dimension: ${selectedDimension === 'Custom' ? customDimension : selectedDimension})` : ''}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-4 border border-zinc-900 text-zinc-900 font-bold uppercase tracking-widest text-xs hover:bg-zinc-900 hover:text-white transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 border border-zinc-900 text-zinc-900 font-bold uppercase tracking-widest text-[10px] hover:bg-zinc-900 hover:text-white transition-all flex items-center justify-center gap-2 rounded-sm"
               >
-                <Phone size={18} /> Inquire via WhatsApp
+                <Phone size={14} /> Inquire via WhatsApp
               </a>
+
+
             </div>
 
             {/* Trust Badges */}

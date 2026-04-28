@@ -216,13 +216,13 @@ const Home = () => {
                 {[
                   "Quality Assurance",
                   "Fast DTDC Delivery",
+                  "Same-Day Local Delivery",
                   "Retail & Wholesale",
                   "Expert Consultation",
-                  "Trendsetting Designs",
-                  "Reliable Service"
+                  "Trendsetting Designs"
                 ].map((item) => (
                   <div key={item} className="flex items-center gap-3">
-                    <CheckCircle2 size={18} className="text-zinc-900" />
+                    <CheckCircle2 size={18} className="text-zinc-900 shrink-0" />
                     <span className="text-zinc-600 text-sm tracking-widest uppercase">{item}</span>
                   </div>
                 ))}
@@ -246,9 +246,9 @@ const Home = () => {
               <div className="h-16 w-16 bg-zinc-50 rounded-full flex items-center justify-center mx-auto mb-6 text-zinc-900">
                 <Truck size={32} />
               </div>
-              <h3 className="text-zinc-900 font-bold uppercase tracking-widest">DTDC Shipping</h3>
+              <h3 className="text-zinc-900 font-bold uppercase tracking-widest">Fast Delivery</h3>
               <p className="text-zinc-500 text-sm leading-relaxed">
-                Fast and reliable online delivery handled by our trusted partner DTDC courier.
+                Pan-India delivery via DTDC. For local delivery in Visakhapatnam, we use Rapido & Uber for ultra-fast same-day service.
               </p>
             </div>
             <div className="text-center space-y-4" data-aos="fade-up" data-aos-delay="100">

@@ -443,20 +443,20 @@ const Products = () => {
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-0 md:p-4">
           <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setIsModalOpen(false)} />
           <div className="relative bg-white w-full h-full md:h-auto md:max-w-4xl md:rounded-sm shadow-2xl flex flex-col max-h-screen md:max-h-[90vh] overflow-hidden">
-            <div className="p-4 md:px-8 md:py-6 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50 backdrop-blur-sm sticky top-0 z-20">
+            <div className="p-4 md:px-8 md:py-6 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50 backdrop-blur-sm sticky top-0 z-20 shrink-0">
               <div>
                 <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter">
                   {editingProduct ? 'Edit Product' : 'Add New Product'}
                 </h2>
                 <p className="text-[8px] md:text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] mt-1">Inventory Management System</p>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="w-10 h-10 flex items-center justify-center bg-white border border-zinc-200 rounded-full hover:bg-red-50 hover:text-red-500 transition-all shadow-sm">
+              <button type="button" onClick={() => setIsModalOpen(false)} className="w-10 h-10 flex items-center justify-center bg-white border border-zinc-200 rounded-full hover:bg-red-50 hover:text-red-500 transition-all shadow-sm shrink-0">
                 <X size={18} />
               </button>
             </div>
 
             {/* Tab Navigation */}
-            <div className="flex border-b border-zinc-100 bg-white sticky top-[81px] z-20 overflow-x-auto scrollbar-hide">
+            <div className="flex border-b border-zinc-100 bg-white sticky top-[81px] z-20 overflow-x-auto scrollbar-hide shrink-0">
               {[
                 { id: 'general', label: 'Basic Info', icon: <Package size={14} /> },
                 { id: 'media', label: 'Media & Gallery', icon: <ImageIcon size={14} /> },
@@ -864,23 +864,63 @@ const Products = () => {
                   <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
                     <div className="bg-white p-8 border border-zinc-100 shadow-sm rounded-sm space-y-8">
                        <div className="space-y-4">
-                          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-900 block">Pricing Strategy</label>
-                          <div className="flex gap-2">
+                          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-900 block">Pricing Strategy & Unit</label>
+                          <div className="flex gap-2 mb-4">
                              {['fixed', 'meter'].map(type => (
                                <button 
                                  key={type}
                                  type="button"
-                                 onClick={() => setFormData({ ...formData, price_type: type })}
+                                 onClick={() => {
+                                   setFormData({ 
+                                     ...formData, 
+                                     price_type: type,
+                                     price_unit: type === 'meter' ? 'per meter' : 'per piece' 
+                                   });
+                                 }}
                                  className={`flex-1 py-4 px-6 text-[10px] uppercase font-black tracking-widest border transition-all ${
                                    formData.price_type === type 
                                      ? 'bg-zinc-900 text-white border-zinc-900 shadow-md' 
-                                     : 'bg-white text-zinc-400 border-zinc-200'
+                                     : 'bg-white text-zinc-400 border-zinc-200 hover:border-zinc-300'
                                  }`}
-                                >
+                               >
                                  {type === 'meter' ? 'Per Meter Pricing' : 'Fixed Product Pricing'}
                                </button>
                              ))}
                           </div>
+
+                          {formData.price_type === 'fixed' && (
+                            <div className="bg-zinc-50 p-4 border border-zinc-100 rounded-sm">
+                              <label className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500 block mb-3">Unit Type for Fixed Pricing</label>
+                              <div className="flex flex-wrap gap-2">
+                                {['per piece', 'per packet', 'custom'].map(unit => (
+                                  <button
+                                    key={unit}
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, price_unit: unit })}
+                                    className={`px-4 py-2 text-[9px] font-black uppercase tracking-widest border transition-all ${
+                                      formData.price_unit === unit || (unit === 'custom' && !['per piece', 'per packet'].includes(formData.price_unit))
+                                        ? 'bg-zinc-900 text-white border-zinc-900'
+                                        : 'bg-white text-zinc-400 border-zinc-200 hover:border-zinc-300'
+                                    }`}
+                                  >
+                                    {unit}
+                                  </button>
+                                ))}
+                              </div>
+                              
+                              {!['per piece', 'per packet'].includes(formData.price_unit) && formData.price_type === 'fixed' && (
+                                <div className="mt-3">
+                                  <input 
+                                    type="text" 
+                                    placeholder="e.g. per box, per dozen"
+                                    className="w-full p-3 bg-white border border-zinc-200 focus:border-zinc-900 outline-none text-xs font-bold uppercase tracking-widest transition-all"
+                                    value={formData.price_unit}
+                                    onChange={(e) => setFormData({ ...formData, price_unit: e.target.value })}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          )}
                        </div>
                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                           <div>
